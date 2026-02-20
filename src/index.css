@@ -1,0 +1,248 @@
+/* ═══════════════════════════════════════════════════════════════
+   SDE OFICIOS — Sistema de Design
+   Paleta: Bandera de Santiago del Estero
+   Tipografía: Poppins (display) + Inter (body)
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Google Fonts ──────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS Variables (shadcn + SDE Oficios) ──────────────────────── */
+@layer base {
+  :root {
+    /* Fondo y texto */
+    --background: 0 0% 100%;
+    /* #FFFFFF */
+    --foreground: 0 0% 13%;
+    /* #222222 */
+
+    /* Card */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 13%;
+
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 13%;
+
+    /* ── Primario: Celeste bandera #75AADB ── */
+    --primary: 210 60% 65%;
+    /* #75AADB */
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 210 60% 94%;
+    /* #E8F2FB — fondo suave */
+    --primary-dark: 210 60% 55%;
+    /* #5A95CC — hover */
+
+    /* ── Secundario: Gris suave para superficies ── */
+    --secondary: 220 13% 96%;
+    /* #F4F5F7 */
+    --secondary-foreground: 0 0% 13%;
+
+    /* ── Muted ── */
+    --muted: 220 13% 96%;
+    --muted-foreground: 220 9% 45%;
+    /* #6B7280 */
+
+    /* ── Acento: Dorado #FCBF49 ── */
+    --accent: 38 97% 64%;
+    /* #FCBF49 */
+    --accent-foreground: 0 0% 13%;
+
+    /* ── Destructivo / CTA fuerte: Rojo punzó #D21010 ── */
+    --destructive: 0 82% 44%;
+    /* #D21010 */
+    --destructive-foreground: 0 0% 100%;
+
+    /* ── Inputs y bordes ── */
+    --border: 220 13% 91%;
+    /* #E5E7EB */
+    --input: 220 13% 91%;
+    --ring: 210 60% 65%;
+    /* celeste */
+
+    /* ── Componentes WhatsApp + estados ── */
+    --whatsapp: 142 70% 49%;
+    --whatsapp-foreground: 0 0% 100%;
+    --available: 142 71% 45%;
+    --unavailable: 220 9% 62%;
+    --verified: 210 60% 65%;
+    --verified-foreground: 0 0% 100%;
+
+    /* ── Radio ── */
+    --radius: 0.625rem;
+    /* 10px — moderno pero no excesivo */
+
+    /* ── Sidebar admin (dark) ── */
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 213 31% 91%;
+    --sidebar-primary: 210 60% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 216 34% 17%;
+    --sidebar-accent-foreground: 213 31% 91%;
+    --sidebar-border: 216 34% 17%;
+    --sidebar-ring: 210 60% 65%;
+  }
+}
+
+/* ── Reset & base styles ───────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Elimina flash azul en tap (Android) */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Scroll suave nativo en iOS */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, sans-serif;
+    /* Evita zoom accidental en inputs en iOS */
+    touch-action: manipulation;
+  }
+
+  /* Botones y links — mínimo 44px de touch target */
+  button,
+  a,
+  [role="button"] {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Poppins', system-ui, sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #222222;
+  }
+
+  p {
+    line-height: 1.7;
+  }
+
+  /* Input font-size mínimo 16px para evitar zoom en iOS */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  @media (min-width: 640px) {
+
+    input,
+    textarea,
+    select {
+      font-size: 14px;
+    }
+  }
+}
+
+/* ── Componentes utilitarios de SDE Oficios ────────────────────── */
+@layer components {
+
+  /* Botón primario: celeste bandera */
+  .btn-primary {
+    @apply bg-sde-celeste text-white font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 hover:bg-sde-celeste-hover shadow-sm hover:shadow-sde active:scale-[0.98];
+    font-family: 'Poppins', sans-serif;
+  }
+
+  /* Botón CTA fuerte: rojo punzó */
+  .btn-cta {
+    @apply bg-sde-rojo text-white font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 hover:bg-[#B50D0D] shadow-sm active:scale-[0.98];
+    font-family: 'Poppins', sans-serif;
+  }
+
+  /* Botón outline celeste */
+  .btn-outline {
+    @apply border-2 border-sde-celeste text-sde-celeste font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 hover:bg-sde-celeste-claro active:scale-[0.98];
+    font-family: 'Poppins', sans-serif;
+  }
+
+  /* Card de oficio */
+  .oficio-card {
+    @apply bg-white rounded-xl border border-gray-100 shadow-card transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5;
+  }
+
+  /* Badge celeste */
+  .badge-celeste {
+    @apply bg-sde-celeste-claro text-sde-celeste text-xs font-semibold px-2.5 py-0.5 rounded-full;
+  }
+
+  /* Badge dorado (acento) */
+  .badge-dorado {
+    @apply bg-sde-dorado-claro text-amber-700 text-xs font-semibold px-2.5 py-0.5 rounded-full;
+  }
+
+  /* Badge rojo */
+  .badge-rojo {
+    @apply bg-sde-rojo-claro text-sde-rojo text-xs font-semibold px-2.5 py-0.5 rounded-full;
+  }
+
+  /* Título de sección */
+  .section-title {
+    @apply font-display text-2xl md:text-3xl font-bold text-sde-texto;
+  }
+
+  /* Línea decorativa celeste-rojo (guiño bandera) */
+  .sde-stripe {
+    height: 3px;
+    background: linear-gradient(90deg, #75AADB 50%, #D21010 50%);
+    border-radius: 9999px;
+  }
+
+  /* Pill de filtro activo */
+  .filter-pill {
+    @apply px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-150 cursor-pointer;
+  }
+
+  .filter-pill.active {
+    @apply bg-sde-celeste text-white border-sde-celeste;
+  }
+
+  .filter-pill.inactive {
+    @apply bg-white text-gray-600 border-gray-200 hover:border-sde-celeste hover:text-sde-celeste;
+  }
+}
+
+/* ── Animaciones de entrada escalonada para cards ──────────────── */
+@layer utilities {
+  .animate-delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .animate-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animate-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .animate-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  /* Franja de bandera horizontal (usada en el Hero) */
+  .bandera-stripe {
+    background: linear-gradient(to bottom,
+        #75AADB 0%, #75AADB 33.3%,
+        #FFFFFF 33.3%, #FFFFFF 66.6%,
+        #D21010 66.6%, #D21010 100%);
+  }
+}
