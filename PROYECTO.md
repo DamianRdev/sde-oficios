@@ -116,12 +116,15 @@ VITE_GEMINI_API_KEY=AIzaSy...
 - [x] `registerType: "autoUpdate"` — se actualiza sola
 - [x] Caché offline de assets estáticos (JS, CSS, HTML, imágenes)
 - [x] Caché de Google Fonts (365 días)
-- [x] Meta tags iOS: `apple-mobile-web-app-capable`, `theme-color`
+- [x] Meta tags iOS: `apple-mobile-web-app-capable`, `theme-color`, `apple-mobile-web-app-title`
 - [x] Instalable en Android (Chrome) y iOS (Safari → Agregar a inicio)
-- [ ] ⚠️ **Pendiente:** reemplazar iconos placeholder por PNGs reales
-  - Generar en [realfavicongenerator.net](https://realfavicongenerator.net)
-  - Guardar como `public/pwa-192x192.png` y `public/pwa-512x512.png`
-  - Actualizar `vite.config.ts` para apuntar a archivos locales
+- [x] **Íconos reales subidos a `public/`:**
+  - `favicon.ico` — navegadores legacy
+  - `favicon.svg` — navegadores modernos
+  - `favicon-96x96.png` — 96px PNG
+  - `apple-touch-icon.png` — iOS homescreen
+  - `web-app-manifest-192x192.png` — Android / PWA
+  - `web-app-manifest-512x512.png` — Android / Splash screen
 
 ### 💬 Botón flotante de WhatsApp
 - [x] Componente `WhatsAppFloat.tsx` en esquina inferior derecha
