@@ -273,6 +273,7 @@ const Register = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [iaLoading, setIaLoading] = useState(false);
   const [iaMejoro, setIaMejoro] = useState(false);
+  const [iaCountdown, setIaCountdown] = useState(0); // segundos restantes de cooldown
 
   const { data: categorias = [], isLoading: loadingCategorias } = useCategorias();
   const { data: zonas = [], isLoading: loadingZonas } = useZonas();
@@ -560,35 +561,72 @@ const Register = () => {
                 <div className="flex items-center gap-2">
 
                   {/* Botón Mejorar con IA */}
-                  {GEMINI_KEY && (
-                    <button
-                      type="button"
-                      disabled={iaLoading || loading || !form.descripcion.trim()}
-                      onClick={async () => {
-                        setIaLoading(true);
-                        setIaMejoro(false);
-                        const resultado = await mejorarTextoConIA(form.descripcion);
-                        setIaLoading(false);
-                        if ("texto" in resultado) {
-                          handleChange("descripcion", resultado.texto);
-                          setIaMejoro(true);
-                          setTimeout(() => setIaMejoro(false), 4000);
-                        } else {
-                          toast({
-                            title: "No se pudo mejorar",
-                            description: resultado.error,
-                            variant: "destructive",
-                          });
-                        }
-                      }}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-violet-300 bg-violet-50 px-3 py-1.5 text-xs font-semibold text-violet-700 transition-all hover:bg-violet-100 disabled:opacity-40 disabled:cursor-not-allowed"
-                    >
-                      {iaLoading
-                        ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        : <Sparkles className="h-3.5 w-3.5" />}
-                      {iaLoading ? "Mejorando…" : "✨ Mejorar con IA"}
-                    </button>
-                  )}
+                  {GEMINI_KEY && (() => {
+                    /** Handler extraído para poder llamarlo desde el useEffect de reintento */
+                    const handleMejorarIA = async () => {
+                      if (iaLoading || iaCountdown > 0 || !form.descripcion.trim()) return;
+                      setIaLoading(true);
+                      setIaMejoro(false);
+                      const resultado = await mejorarTextoConIA(form.descripcion);
+                      setIaLoading(false);
+                      if ("texto" in resultado) {
+                        handleChange("descripcion", resultado.texto);
+                        setIaMejoro(true);
+                        setTimeout(() => setIaMejoro(false), 4000);
+                      } else if (resultado.error.includes("Demasiadas")) {
+                        // 429 → iniciar countdown de 35 segundos y reintentar automáticamente
+                        let secs = 35;
+                        setIaCountdown(secs);
+                        const interval = setInterval(() => {
+                          secs -= 1;
+                          setIaCountdown(secs);
+                          if (secs <= 0) {
+                            clearInterval(interval);
+                            // Reintento automático
+                            setIaLoading(true);
+                            mejorarTextoConIA(form.descripcion).then((r) => {
+                              setIaLoading(false);
+                              if ("texto" in r) {
+                                handleChange("descripcion", r.texto);
+                                setIaMejoro(true);
+                                setTimeout(() => setIaMejoro(false), 4000);
+                              } else {
+                                toast({ title: "No se pudo mejorar", description: r.error, variant: "destructive" });
+                              }
+                            });
+                          }
+                        }, 1000);
+                      } else {
+                        toast({ title: "No se pudo mejorar", description: resultado.error, variant: "destructive" });
+                      }
+                    };
+
+                    const enCooldown = iaCountdown > 0;
+                    return (
+                      <button
+                        type="button"
+                        disabled={iaLoading || !form.descripcion.trim() || loading}
+                        onClick={handleMejorarIA}
+                        className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all disabled:cursor-not-allowed
+                          ${enCooldown
+                            ? "border-amber-300 bg-amber-50 text-amber-700"
+                            : "border-violet-300 bg-violet-50 text-violet-700 hover:bg-violet-100 disabled:opacity-40"
+                          }`}
+                      >
+                        {iaLoading
+                          ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          : enCooldown
+                            ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            : <Sparkles className="h-3.5 w-3.5" />}
+                        {iaLoading
+                          ? "Mejorando…"
+                          : enCooldown
+                            ? `Reintentando en ${iaCountdown}s…`
+                            : "✨ Mejorar con IA"}
+                      </button>
+                    );
+                  })()}
+
 
                   {/* Botón preview */}
                   <button
