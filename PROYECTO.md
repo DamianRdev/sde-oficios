@@ -17,7 +17,7 @@
 | Auth admin | Supabase Auth |
 | Storage fotos | Supabase Storage |
 | Email | EmailJS |
-| IA (descripciones) | Google Gemini 2.0 Flash |
+| IA (descripciones) | ~~Google Gemini 2.0 Flash~~ ❌ eliminado |
 | Deploy | Vercel |
 | Control de versiones | GitHub |
 
@@ -34,7 +34,7 @@ VITE_EMAILJS_SERVICE_ID=service_kqbq6yq
 VITE_EMAILJS_TEMPLATE_SOLICITUD=template_hgcr4ey
 VITE_EMAILJS_PUBLIC_KEY=Ua7xIHOTD2rB9GT-4
 VITE_ADMIN_EMAIL=damian.exequiel.r@gmail.com
-VITE_GEMINI_API_KEY=AIzaSy...
+# VITE_GEMINI_API_KEY=AIzaSy...  # Eliminado — feature de IA removida
 ```
 
 🔗 **En Vercel:** Settings → Environment Variables → agregar todas.
@@ -78,11 +78,11 @@ VITE_GEMINI_API_KEY=AIzaSy...
 ### 📝 Formulario de registro (`/registrarse`)
 - [x] Campos: nombre, teléfono, categoría, zona, horarios
 - [x] Textarea de descripción con contador de caracteres (máx 500)
-- [x] **✨ Botón "Mejorar con IA"** usando Gemini 2.0 Flash
-  - Corrige ortografía
-  - Mejora profesionalismo
-  - Mantiene tono coloquial argentino (vos, etc.)
-  - Manejo de errores: 429 (rate limit), 403 (key inválida), sin red
+- [x] **✨ Botón "Mejorar con IA"** — ~~Eliminado~~ (problemas de rate limit en free tier)
+  - ~~Corrige ortografía~~
+  - ~~Mejora profesionalismo~~
+  - ~~Mantiene tono coloquial argentino (vos, etc.)~~
+  - ~~Manejo de errores: 429 (rate limit), 403 (key inválida), sin red~~
 - [x] Subida de foto de perfil (Supabase Storage, máx 3MB)
 - [x] Preview de la card en tiempo real antes de enviar
 - [x] Sección opcional de **redes sociales** (toggle expandible)
