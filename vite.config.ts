@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.ico", "robots.txt"],
+      includeAssets: ["favicon.ico", "favicon.svg", "favicon-96x96.png", "apple-touch-icon.png", "robots.txt"],
       manifest: {
         name: "OficiosSDE - Profesionales en Santiago del Estero",
         short_name: "OficiosSDE",
@@ -27,13 +27,13 @@ export default defineConfig(({ mode }) => ({
         scope: "/",
         icons: [
           {
-            src: "https://placehold.co/192x192/75AADB/ffffff.png?text=SDE",
+            src: "/web-app-manifest-192x192.png",
             sizes: "192x192",
             type: "image/png",
             purpose: "any maskable"
           },
           {
-            src: "https://placehold.co/512x512/75AADB/ffffff.png?text=SDE",
+            src: "/web-app-manifest-512x512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any maskable"
