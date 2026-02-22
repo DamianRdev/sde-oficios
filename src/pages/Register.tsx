@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   CheckCircle2, Loader2, AlertCircle, Camera, X,
   Eye, EyeOff, Plus, BadgeCheck, MapPin, Clock, Star, MessageCircle,
-  Facebook, Instagram, ChevronDown, Sparkles,
+  Facebook, Instagram, ChevronDown,
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -24,55 +24,7 @@ const EMAILJS_SERVICE = import.meta.env.VITE_EMAILJS_SERVICE_ID ?? "";
 const EMAILJS_TEMPLATE = import.meta.env.VITE_EMAILJS_TEMPLATE_SOLICITUD ?? "";
 const EMAILJS_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY ?? "";
 const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL ?? "";
-const GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY ?? "";
 const MAX_FOTO_MB = 3;
-
-/**
- * Llama a Gemini 2.0 Flash para corregir ortografía y mejorar el texto.
- * Retorna { texto } en éxito o { error } con mensaje legible según el código HTTP.
- */
-async function mejorarTextoConIA(
-  texto: string
-): Promise<{ texto: string } | { error: string }> {
-  if (!GEMINI_KEY) return { error: "Sin API key configurada." };
-  if (!texto.trim()) return { error: "El campo está vacío." };
-
-  const prompt = `Sos un asistente que ayuda a profesionales del hogar en Argentina a presentarse mejor.
-Corregí la ortografía, mejorá el texto y hacélo más profesional y atractivo para clientes.
-Mantené el estilo coloquial argentino (vos, etc.). Devolvé SOLO el texto mejorado,
-sin explicaciones ni comillas, en máximo 300 caracteres.
-
-Texto original: "${texto}"`;
-
-  try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.4, maxOutputTokens: 200 },
-        }),
-      }
-    );
-
-    if (res.status === 429)
-      return { error: "Demasiadas solicitudes. Esperá unos segundos e intentá de nuevo." };
-    if (res.status === 403 || res.status === 400)
-      return { error: "API key inválida o sin permisos. Revisá tu configuración." };
-    if (!res.ok)
-      return { error: `Error de la API (${res.status}). Intentá de nuevo.` };
-
-    const json = await res.json();
-    const mejorado = json?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-    if (!mejorado) return { error: "La IA no devolvió respuesta. Intentá de nuevo." };
-
-    return { texto: mejorado };
-  } catch {
-    return { error: "Sin conexión a internet. Revisá tu red." };
-  }
-}
 
 // Tags de oficios adicionales predefinidos (para el selector rápido)
 const OFICIOS_ADICIONALES = [
@@ -271,9 +223,7 @@ const Register = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const [iaLoading, setIaLoading] = useState(false);
-  const [iaMejoro, setIaMejoro] = useState(false);
-  const [iaCountdown, setIaCountdown] = useState(0); // segundos restantes de cooldown
+
 
   const { data: categorias = [], isLoading: loadingCategorias } = useCategorias();
   const { data: zonas = [], isLoading: loadingZonas } = useZonas();
