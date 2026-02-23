@@ -12,6 +12,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminSolicitudes from "./pages/admin/AdminSolicitudes";
 import AdminProfesionales from "./pages/admin/AdminProfesionales";
 import AdminResenas from "./pages/admin/AdminResenas";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import { AdminAuthProvider } from "./hooks/use-admin-auth";
 import { ProtectedAdminRoute } from "./components/admin/ProtectedAdminRoute";
 import WhatsAppFloat from "./components/WhatsAppFloat";
@@ -69,6 +70,14 @@ const AppRoutes = () => {
           element={
             <ProtectedAdminRoute>
               <AdminResenas />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin/analytics"
+          element={
+            <ProtectedAdminRoute>
+              <AdminAnalytics />
             </ProtectedAdminRoute>
           }
         />

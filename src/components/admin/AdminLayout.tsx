@@ -8,6 +8,7 @@ import {
     Menu,
     X,
     Star,
+    TrendingUp,
 } from "lucide-react";
 import { useState } from "react";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
@@ -17,6 +18,7 @@ const navItems = [
     { to: "/admin/solicitudes", icon: ClipboardList, label: "Solicitudes" },
     { to: "/admin/profesionales", icon: Users, label: "Profesionales" },
     { to: "/admin/resenas", icon: Star, label: "Reseñas" },
+    { to: "/admin/analytics", icon: TrendingUp, label: "Analytics" },
 ];
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
