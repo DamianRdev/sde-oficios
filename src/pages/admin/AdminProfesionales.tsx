@@ -8,6 +8,7 @@ import {
     Trash2,
     Loader2,
     Search,
+    Download,
 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase, db } from "@/lib/supabase";
@@ -18,6 +19,54 @@ const AdminProfesionales = () => {
     const { toast } = useToast();
     const queryClient = useQueryClient();
     const [busqueda, setBusqueda] = useState("");
+
+    // ── Exportar CSV ──────────────────────────────────────────────────────────
+    const exportarCSV = async () => {
+        const { data, error } = await supabase
+            .from("profesionales")
+            .select(`
+                id, nombre, telefono, disponible, verificado,
+                destacado, activo, contactos_count, created_at,
+                categorias:categoria_id(nombre),
+                zonas:zona_id(nombre)
+            `)
+            .order("created_at", { ascending: false });
+
+        if (error || !data) {
+            toast({ title: "Error al exportar", description: error?.message, variant: "destructive" });
+            return;
+        }
+
+        const headers = ["ID", "Nombre", "Teléfono", "Categoría", "Zona", "Activo", "Verificado", "Destacado", "Disponible", "Contactos WA", "Fecha registro"];
+        const rows = data.map((p: any) => [
+            p.id,
+            p.nombre,
+            p.telefono,
+            (p.categorias as any)?.nombre ?? "",
+            (p.zonas as any)?.nombre ?? "",
+            p.activo ? "Sí" : "No",
+            p.verificado ? "Sí" : "No",
+            p.destacado ? "Sí" : "No",
+            p.disponible ? "Sí" : "No",
+            p.contactos_count ?? 0,
+            new Date(p.created_at).toLocaleDateString("es-AR"),
+        ]);
+
+        const csvContent = [
+            headers.join(","),
+            ...rows.map((r) => r.map((v: any) => `"${String(v).replace(/"/g, '""')}"`).join(",")),
+        ].join("\n");
+
+        const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `sde-profesionales-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        toast({ title: "✅ CSV exportado", description: `${data.length} profesionales exportados.` });
+    };
 
     const { data: profesionales = [], isLoading } = useQuery({
         queryKey: ["admin-profesionales", busqueda],
@@ -101,8 +150,8 @@ const AdminProfesionales = () => {
             onClick={onToggle}
             title={title}
             className={`rounded-lg p-1.5 transition-colors ${active
-                    ? `${colorOn} text-white`
-                    : "bg-slate-800 text-slate-500 hover:text-slate-300"
+                ? `${colorOn} text-white`
+                : "bg-slate-800 text-slate-500 hover:text-slate-300"
                 }`}
         >
             <Icon className="h-3.5 w-3.5" />
@@ -111,13 +160,22 @@ const AdminProfesionales = () => {
 
     return (
         <AdminLayout>
-            <div className="mb-8">
-                <h1 className="font-display text-2xl font-bold text-white">
-                    Profesionales
-                </h1>
-                <p className="mt-1 text-sm text-slate-400">
-                    Gestioná todos los perfiles del directorio.
-                </p>
+            <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+                <div>
+                    <h1 className="font-display text-2xl font-bold text-white">
+                        Profesionales
+                    </h1>
+                    <p className="mt-1 text-sm text-slate-400">
+                        Gestioná todos los perfiles del directorio.
+                    </p>
+                </div>
+                <button
+                    onClick={exportarCSV}
+                    className="inline-flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-400 transition-colors hover:bg-emerald-500/20"
+                >
+                    <Download className="h-4 w-4" />
+                    Exportar CSV
+                </button>
             </div>
 
             {/* Buscador */}
