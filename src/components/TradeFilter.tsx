@@ -25,8 +25,8 @@ const TradeFilter = ({
 
       {/* Filtro por oficio */}
       <div>
-        <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gray-400">
-          <Briefcase className="h-3.5 w-3.5 text-sde-celeste" />
+        <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <Briefcase className="h-3.5 w-3.5 text-primary" />
           Oficio
         </div>
         <div className="flex flex-wrap gap-2">
@@ -38,8 +38,8 @@ const TradeFilter = ({
           </button>
 
           {loadingCat ? (
-            <div className="flex items-center gap-2 px-4 py-2 text-sm text-gray-400">
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-sde-celeste" />
+            <div className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground">
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
               Cargando...
             </div>
           ) : (
@@ -57,12 +57,12 @@ const TradeFilter = ({
       </div>
 
       {/* Separador */}
-      <div className="h-px bg-gray-100" />
+      <div className="h-px bg-border/50" />
 
       {/* Filtro por zona */}
       <div>
-        <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gray-400">
-          <MapPin className="h-3.5 w-3.5 text-sde-celeste" />
+        <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <MapPin className="h-3.5 w-3.5 text-primary" />
           Zona
         </div>
         <div className="flex flex-wrap gap-2">
@@ -74,8 +74,8 @@ const TradeFilter = ({
           </button>
 
           {loadingZonas ? (
-            <div className="flex items-center gap-2 px-4 py-2 text-sm text-gray-400">
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-sde-celeste" />
+            <div className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground">
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
             </div>
           ) : (
             zonas.map((zona) => (

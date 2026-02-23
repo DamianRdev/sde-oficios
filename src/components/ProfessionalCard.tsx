@@ -37,8 +37,8 @@ const ProfessionalCard = ({ profesional }: { profesional: ProfesionalCompleto })
       {/* Banner destacado — reserva espacio siempre para altura uniforme */}
       <div
         className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold transition-colors ${destacado
-            ? "bg-sde-dorado-claro text-amber-700"
-            : "invisible py-1.5 pointer-events-none"
+          ? "bg-sde-dorado-claro text-amber-900 dark:bg-yellow-500/20 dark:text-yellow-500"
+          : "invisible py-1.5 pointer-events-none"
           }`}
       >
         <Star className="h-3 w-3 fill-sde-dorado text-sde-dorado" />
@@ -55,10 +55,10 @@ const ProfessionalCard = ({ profesional }: { profesional: ProfesionalCompleto })
               src={foto_url}
               alt={nombre}
               loading="lazy"
-              className="h-16 w-16 rounded-xl object-cover ring-2 ring-gray-100"
+              className="h-16 w-16 rounded-xl object-cover ring-2 ring-border/50"
             />
           ) : (
-            <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-sde-celeste-claro font-display text-2xl font-bold text-sde-celeste">
+            <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-primary-light font-display text-2xl font-bold text-primary dark:bg-primary/20">
               {initials}
             </div>
           )}
@@ -68,7 +68,7 @@ const ProfessionalCard = ({ profesional }: { profesional: ProfesionalCompleto })
         <div className="min-w-0 flex-1">
           {/* Nombre */}
           <Link to={`/profesional/${id}`} className="block">
-            <h3 className="truncate font-display text-[15px] font-bold text-sde-texto hover:text-sde-celeste transition-colors leading-snug">
+            <h3 className="truncate font-display text-[15px] font-bold text-foreground hover:text-primary transition-colors leading-snug">
               {nombre}
             </h3>
           </Link>
@@ -77,7 +77,7 @@ const ProfessionalCard = ({ profesional }: { profesional: ProfesionalCompleto })
           <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
             <span className="badge-celeste text-[11px]">{categoria_nombre}</span>
             {verificado && (
-              <span className="inline-flex items-center gap-0.5 rounded-full border border-sde-celeste/20 bg-sde-celeste/10 px-1.5 py-0.5 text-[10px] font-semibold text-sde-celeste">
+              <span className="inline-flex items-center gap-0.5 rounded-full border border-primary/20 bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
                 <BadgeCheck className="h-2.5 w-2.5" />
                 Verificado
               </span>
@@ -85,23 +85,23 @@ const ProfessionalCard = ({ profesional }: { profesional: ProfesionalCompleto })
           </div>
 
           {/* Zona + disponibilidad + rating — en una sola fila */}
-          <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+          <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-0.5">
-              <MapPin className="h-3 w-3 text-sde-celeste" />
+              <MapPin className="h-3 w-3 text-primary" />
               {zona_nombre}
             </span>
             <span
-              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium ${disponible ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-500"
+              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium ${disponible ? "bg-green-500/10 text-green-600 dark:text-green-400" : "bg-muted text-muted-foreground"
                 }`}
             >
-              <span className={`h-1.5 w-1.5 rounded-full ${disponible ? "bg-green-500" : "bg-gray-400"}`} />
+              <span className={`h-1.5 w-1.5 rounded-full ${disponible ? "bg-green-500" : "bg-muted-foreground/40"}`} />
               {disponible ? "Disponible" : "No disponible"}
             </span>
             {calificacion_promedio !== null && total_resenas > 0 && (
-              <span className="inline-flex items-center gap-0.5 font-semibold text-sde-texto">
+              <span className="inline-flex items-center gap-0.5 font-semibold text-foreground">
                 <Star className="h-3 w-3 fill-sde-dorado text-sde-dorado" />
                 {calificacion_promedio}
-                <span className="font-normal text-gray-400">({total_resenas})</span>
+                <span className="font-normal text-muted-foreground/60">({total_resenas})</span>
               </span>
             )}
           </div>
@@ -119,11 +119,11 @@ const ProfessionalCard = ({ profesional }: { profesional: ProfesionalCompleto })
           style={{ minHeight: "48px" }}
         >
           <MessageCircle className="h-4 w-4" />
-          Contactar por WhatsApp
+          WhatsApp
         </a>
         <Link
           to={`/profesional/${id}`}
-          className="flex items-center justify-center rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-600 transition-all hover:border-sde-celeste hover:text-sde-celeste"
+          className="flex items-center justify-center rounded-xl border border-border bg-card px-4 py-3 text-sm font-medium text-muted-foreground transition-all hover:border-primary hover:text-primary"
           style={{ minHeight: "48px" }}
           title="Ver perfil completo"
         >

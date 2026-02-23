@@ -167,10 +167,11 @@ VITE_ADMIN_EMAIL=damian.exequiel.r@gmail.com
 - [ ] Panel de analytics para el admin (contactos por WhatsApp por profesional)
 - [ ] Filtro de rango de precios o presupuesto en el profesional
 - [ ] Sistema de "disponibilidad horaria" más detallado (agenda)
+- [x] Restricción de 1 solo oficio por número de WhatsApp (Anti-trampas)
 - [ ] Galería de trabajos realizados (múltiples fotos)
 - [ ] Verificación por WhatsApp del número de teléfono al registrarse
 - [ ] Exportar listado de profesionales a CSV desde admin
-- [ ] Modo oscuro
+- [ ]
 
 ---
 

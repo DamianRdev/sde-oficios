@@ -14,6 +14,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
 // Cliente sin tipos estrictos para operaciones de escritura del panel admin
-// (inserts/updates con campos dinámicos)
-export const db = createClient(supabaseUrl, supabaseAnonKey);
+export const db = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: false, // Evita conflictos con el cliente principal
+  }
+});
 

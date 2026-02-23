@@ -38,77 +38,82 @@ const Hero = ({ onScrollToProfessionals, onCategoriaRapida, onBusqueda }: HeroPr
   };
 
   return (
-    <section className="relative overflow-hidden bg-white">
-      {/* Franja celeste superior */}
-      <div className="h-1 w-full bg-sde-celeste" />
+    <section className="relative overflow-hidden bg-background">
+      {/* Fondo con gradiente sutil para premium feel en dark mode */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-sde-rojo/5 pointer-events-none" />
 
-      <div className="container py-8 md:py-14">
+      {/* Franja celeste superior */}
+      <div className="h-1.5 w-full bg-sde-celeste/80" />
+
+      <div className="container relative py-8 md:py-20 px-4">
         {/* Chip de ubicación */}
-        <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-sde-celeste/30 bg-sde-celeste-claro px-3 py-1 text-xs font-medium text-sde-celeste">
+        <div className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary shadow-sm">
           <MapPin className="h-3 w-3" />
           Santiago del Estero
         </div>
 
-        {/* Título — compacto en mobile */}
-        <h1 className="mb-2 font-display text-3xl font-bold leading-tight text-sde-texto sm:text-4xl md:text-[3.2rem]">
+        {/* Título — premium typography */}
+        <h1 className="mb-4 font-display text-4xl font-black leading-[1.1] text-foreground sm:text-5xl md:text-7xl tracking-tight">
           Encontrá tu{" "}
-          <span className="relative text-sde-celeste">
-            oficio
-            <span className="absolute -bottom-0.5 left-0 h-[3px] w-full rounded-full bg-sde-dorado" />
+          <span className="relative inline-block">
+            <span className="relative z-10 text-primary">oficio</span>
+            <span className="absolute -bottom-1 left-0 h-[6px] w-full rounded-full bg-sde-dorado/40 -rotate-1" />
           </span>{" "}
           ahora
         </h1>
-        <p className="mb-6 text-sm text-gray-500 md:text-base">
-          Plomeros, electricistas, albañiles y más — contacto directo por WhatsApp.
+        <p className="mb-8 max-w-lg text-sm font-medium text-muted-foreground md:text-lg leading-relaxed">
+          La red más grande de <span className="text-foreground font-bold">profesionales santiagueños</span>.
+          Contactá directo sin intermediarios.
         </p>
 
         {/* ── Buscador principal ─────────────────────────────────────── */}
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <div className="flex flex-col sm:flex-row gap-3 max-w-2xl">
+          <div className="relative flex-1 group">
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <input
               ref={inputRef}
               type="text"
-              placeholder="¿Qué servicio necesitás?"
+              placeholder="¿Qué servicio necesitás hoy?"
               value={termino}
               onChange={(e) => setTermino(e.target.value)}
               onKeyDown={handleKeyDown}
-              autoComplete="off"
-              autoCorrect="off"
-              className="h-12 w-full rounded-xl border-2 border-gray-200 bg-white pl-10 pr-9 text-sm text-sde-texto placeholder:text-gray-400 focus:border-sde-celeste focus:outline-none focus:ring-0 transition-colors"
+              className="h-14 w-full rounded-2xl border-2 border-border bg-card/80 backdrop-blur-sm pl-12 pr-10 text-base font-medium text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:bg-card focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all shadow-lg shadow-black/5"
             />
             {termino && (
               <button
                 onClick={() => { setTermino(""); inputRef.current?.focus(); }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-sde-rojo transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-sde-rojo transition-colors p-1"
               >
                 <X className="h-4 w-4" />
               </button>
             )}
           </div>
-          {/* Botón buscar — rojo punzó */}
           <button
             onClick={handleBuscar}
-            className="h-12 rounded-xl bg-sde-rojo px-5 font-display text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#B50D0D] active:scale-95"
+            className="h-14 rounded-2xl bg-sde-rojo px-8 font-display text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-sde-rojo/20 transition-all hover:bg-[#B50D0D] hover:shadow-sde-rojo/30 active:scale-[0.97] active:shadow-inner"
           >
             Buscar
           </button>
         </div>
 
         {/* ── Categorías rápidas — scroll horizontal ─────────────────── */}
-        <div className="mt-5">
-          <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
-            Más buscados
-          </p>
-          {/* Scroll horizontal sin scrollbar visible */}
-          <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="mt-10">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="h-px flex-1 bg-border/50" />
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+              Tendencias
+            </p>
+            <div className="h-px flex-1 bg-border/50" />
+          </div>
+
+          <div className="flex gap-2.5 overflow-x-auto pb-4 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {CATEGORIAS_RAPIDAS.map((cat) => (
               <button
                 key={cat.slug}
                 onClick={() => handleCategoria(cat.slug)}
-                className="flex shrink-0 items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-all hover:border-sde-celeste hover:bg-sde-celeste-claro hover:text-sde-celeste active:scale-95"
+                className="flex shrink-0 items-center gap-2 rounded-2xl border border-border bg-card/50 backdrop-blur-sm px-5 py-3 text-sm font-bold text-foreground shadow-sm transition-all hover:border-primary hover:bg-primary/5 hover:text-primary hover:shadow-md hover:-translate-y-0.5 active:scale-95"
               >
-                <span role="img" aria-label={cat.label} className="text-base leading-none">
+                <span role="img" aria-label={cat.label} className="text-lg leading-none filter drop-shadow-sm">
                   {cat.emoji}
                 </span>
                 {cat.label}
@@ -118,25 +123,17 @@ const Hero = ({ onScrollToProfessionals, onCategoriaRapida, onBusqueda }: HeroPr
         </div>
 
         {/* ── Stats rápidos ───────────────────────────────────────────── */}
-        <div className="mt-6 flex items-center gap-1.5 text-xs text-gray-400">
-          <Zap className="h-3.5 w-3.5 text-sde-dorado" />
-          <span>Respuesta promedio en <strong className="text-sde-texto">menos de 1 hora</strong></span>
+        <div className="mt-4 flex items-center gap-2 text-[11px] font-bold text-muted-foreground/80 bg-muted/30 w-fit px-4 py-2 rounded-full border border-border/50">
+          <div className="flex h-2 w-2 rounded-full bg-sde-dorado animate-pulse" />
+          <span className="uppercase tracking-wider">Conexión directa: <strong className="text-foreground">Sin comisiones</strong></span>
         </div>
       </div>
 
-      {/* Franja tricolor inferior */}
-      <div className="flex h-1">
-        <div className="flex-1 bg-sde-celeste" />
-        <div className="flex-1 bg-gray-100" />
-        <div className="flex-1 bg-sde-rojo" />
-      </div>
-
-      {/* Decoración (solo desktop) */}
-      <div className="pointer-events-none absolute right-0 top-0 hidden h-full w-1/3 lg:block">
-        <div className="absolute inset-0 bg-gradient-to-l from-sde-gris to-transparent" />
-        <div className="absolute right-12 top-1/2 -translate-y-1/2">
-          <div className="h-56 w-56 rounded-full border-[6px] border-sde-celeste/15" />
-          <div className="absolute left-8 top-8 h-40 w-40 rounded-full border-[4px] border-sde-dorado/20" />
+      {/* Decoración (mejorada para dark mode) */}
+      <div className="pointer-events-none absolute right-[-5%] top-[-10%] hidden h-[120%] w-1/2 lg:block opacity-50 dark:opacity-20">
+        <div className="absolute right-0 top-1/2 -translate-y-1/2">
+          <div className="h-96 w-96 rounded-full border-[20px] border-primary/5" />
+          <div className="absolute left-20 top-20 h-64 w-64 rounded-full border-[10px] border-sde-dorado/5 animate-slow-spin" />
         </div>
       </div>
     </section>

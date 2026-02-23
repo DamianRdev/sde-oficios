@@ -10,6 +10,8 @@ import {
     ChevronDown,
     ChevronUp,
     Loader2,
+    Images,
+    Eye,
 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase, db } from "@/lib/supabase";
@@ -34,15 +36,15 @@ const AdminSolicitudes = () => {
     const { data: solicitudes = [], isLoading } = useQuery({
         queryKey: ["admin-solicitudes", filtro],
         queryFn: async () => {
-            let query = supabase
+            let query = (supabase as any)
                 .from("solicitudes_registro")
                 .select(`
-          id, nombre, telefono, servicios_texto, horarios,
-          descripcion, estado, notas_admin, foto_url, created_at,
-          facebook_url, instagram_url, tiktok_url,
-          categorias:categoria_id(id, nombre),
-          zonas:zona_id(id, nombre)
-        `)
+                    id, nombre, telefono, servicios_texto, horarios,
+                    descripcion, estado, notas_admin, foto_url, created_at,
+                    facebook_url, instagram_url, tiktok_url, galeria_urls,
+                    categorias:categoria_id(id, nombre),
+                    zonas:zona_id(id, nombre)
+                `)
                 .order("created_at", { ascending: false });
 
             if (filtro !== "todas") {
@@ -51,6 +53,12 @@ const AdminSolicitudes = () => {
 
             const { data, error } = await query;
             if (error) throw new Error(error.message);
+
+            // Log de depuración para ver qué fotos llegan de la DB
+            if (data && data.length > 0) {
+                console.log("Solicitudes cargadas con galería:", data.filter(s => s.galeria_urls?.length > 0).length);
+            }
+
             return data ?? [];
         },
     });
@@ -59,7 +67,7 @@ const AdminSolicitudes = () => {
     const aprobar = useMutation({
         mutationFn: async (solicitud: any) => {
             // 1. Crear el profesional
-            const { data: prof, error: errProf } = await db
+            const { data: prof, error: errProf } = await (supabase as any)
                 .from("profesionales")
                 .insert({
                     nombre: solicitud.nombre,
@@ -94,12 +102,44 @@ const AdminSolicitudes = () => {
                     }));
 
                 if (servicios.length > 0) {
-                    await db.from("servicios").insert(servicios);
+                    await (supabase as any).from("servicios").insert(servicios);
                 }
             }
 
-            // 3. Actualizar el estado de la solicitud
-            const { error: errSol } = await db
+            // 3. Agregar fotos de la galería
+            if (prof) {
+                let urls: string[] = [];
+                const raw = solicitud.galeria_urls;
+
+                if (Array.isArray(raw)) {
+                    urls = raw;
+                } else if (typeof raw === 'string') {
+                    if (raw.startsWith('[') && raw.endsWith(']')) {
+                        try { urls = JSON.parse(raw); } catch (e) { urls = []; }
+                    } else {
+                        urls = raw.replace(/[{}]/g, '').split(',').map(u => u.trim()).filter(Boolean);
+                    }
+                }
+
+                if (urls.length > 0) {
+                    console.log(`Insertando ${urls.length} fotos en galería para profesional ${prof.id}`);
+                    const fotosGaleria = urls.map((url: string, index: number) => ({
+                        profesional_id: prof.id,
+                        url,
+                        orden: index,
+                    }));
+                    const { error: errGal } = await (supabase as any).from("galeria_trabajos").insert(fotosGaleria);
+                    if (errGal) {
+                        console.error("Error al insertar en galeria_trabajos:", errGal);
+                        toast({ title: "Aviso", description: "El profesional fue creado pero hubo un error con sus fotos.", variant: "destructive" });
+                    }
+                } else {
+                    console.log("No hay URLs de galería para transferir.");
+                }
+            }
+
+            // 4. Actualizar el estado de la solicitud
+            const { error: errSol } = await (supabase as any)
                 .from("solicitudes_registro")
                 .update({
                     estado: "aprobada",
@@ -123,7 +163,7 @@ const AdminSolicitudes = () => {
     // Rechazar solicitud
     const rechazar = useMutation({
         mutationFn: async (id: string) => {
-            const { error } = await db
+            const { error } = await (supabase as any)
                 .from("solicitudes_registro")
                 .update({
                     estado: "rechazada",
@@ -195,7 +235,7 @@ const AdminSolicitudes = () => {
                     {solicitudes.map((s: any) => {
                         const isOpen = expandido === s.id;
                         const isProcessing =
-                            (aprobar.isPending && aprobar.variables?.id === s.id) ||
+                            (aprobar.isPending && (aprobar.variables as any)?.id === s.id) ||
                             (rechazar.isPending && rechazar.variables === s.id);
 
                         return (
@@ -238,8 +278,8 @@ const AdminSolicitudes = () => {
                                 {/* Detalle expandido */}
                                 {isOpen && (
                                     <div className="border-t border-slate-800 px-5 py-5">
-                                        <div className="grid gap-4 sm:grid-cols-2">
-                                            <div className="space-y-3">
+                                        <div className="grid gap-6 sm:grid-cols-2">
+                                            <div className="space-y-4">
                                                 {/* Foto de perfil */}
                                                 {s.foto_url && (
                                                     <div>
@@ -253,6 +293,54 @@ const AdminSolicitudes = () => {
                                                         </a>
                                                     </div>
                                                 )}
+
+                                                {/* Galería de trabajos - Movida arriba para mejor visibilidad */}
+                                                {(() => {
+                                                    let urls: string[] = [];
+                                                    const raw = s.galeria_urls;
+
+                                                    if (Array.isArray(raw)) {
+                                                        urls = raw;
+                                                    } else if (typeof raw === 'string') {
+                                                        if (raw.startsWith('[') && raw.endsWith(']')) {
+                                                            try { urls = JSON.parse(raw); } catch (e) { urls = []; }
+                                                        } else {
+                                                            urls = raw.replace(/[{}]/g, '').split(',').map(u => u.trim()).filter(Boolean);
+                                                        }
+                                                    }
+
+                                                    if (urls.length === 0) return null;
+
+                                                    return (
+                                                        <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
+                                                            <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                                                                <Images className="h-3.5 w-3.5 text-primary" />
+                                                                Galería de Trabajos ({urls.length})
+                                                            </p>
+                                                            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                                                                {urls.map((url: string, idx: number) => (
+                                                                    <a
+                                                                        key={idx}
+                                                                        href={url}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="group relative aspect-video overflow-hidden rounded-lg bg-slate-900 ring-1 ring-slate-700 transition-all hover:ring-primary"
+                                                                    >
+                                                                        <img
+                                                                            src={url}
+                                                                            alt={`Trabajo ${idx + 1}`}
+                                                                            className="h-full w-full object-cover transition-transform group-hover:scale-110"
+                                                                        />
+                                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                                                                            <Eye className="h-5 w-5 text-white" />
+                                                                        </div>
+                                                                    </a>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })()}
+
                                                 <div className="flex items-center gap-2 text-sm text-slate-300">
                                                     <Phone className="h-3.5 w-3.5 text-slate-500" />
                                                     <span>{s.telefono}</span>
@@ -271,18 +359,13 @@ const AdminSolicitudes = () => {
                                                         <span>{s.horarios}</span>
                                                     </div>
                                                 )}
-                                                {s.descripcion && (
-                                                    <div className="flex items-start gap-2 text-sm text-slate-300">
-                                                        <User className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
-                                                        <span>{s.descripcion}</span>
-                                                    </div>
-                                                )}
                                                 {s.servicios_texto && (
                                                     <div>
                                                         <p className="mb-1 text-xs font-medium text-slate-500">Servicios:</p>
                                                         <p className="text-sm text-slate-300">{s.servicios_texto}</p>
                                                     </div>
                                                 )}
+
                                                 {/* Redes sociales */}
                                                 {(s.facebook_url || s.instagram_url || s.tiktok_url) && (
                                                     <div>
@@ -312,54 +395,63 @@ const AdminSolicitudes = () => {
                                             </div>
 
                                             {/* Notas del admin y acciones */}
-                                            {s.estado === "pendiente" && (
-                                                <div className="space-y-3">
-                                                    <div>
-                                                        <label className="mb-1.5 block text-xs font-medium text-slate-400">
-                                                            Notas internas (opcional)
-                                                        </label>
-                                                        <textarea
-                                                            rows={3}
-                                                            value={notasAdmin[s.id] ?? ""}
-                                                            onChange={(e) =>
-                                                                setNotasAdmin((prev) => ({ ...prev, [s.id]: e.target.value }))
-                                                            }
-                                                            placeholder="Notas solo visibles para el admin..."
-                                                            className="w-full resize-none rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-primary focus:outline-none"
-                                                        />
+                                            <div className="space-y-4">
+                                                {s.descripcion && (
+                                                    <div className="rounded-lg bg-slate-800/40 p-3 ring-1 ring-slate-700/50">
+                                                        <p className="mb-1 text-xs font-medium text-slate-500">Descripción del profesional:</p>
+                                                        <p className="text-sm italic text-slate-300 leading-relaxed">"{s.descripcion}"</p>
                                                     </div>
-                                                    <div className="flex gap-2">
-                                                        <button
-                                                            onClick={() => aprobar.mutate(s)}
-                                                            disabled={isProcessing}
-                                                            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-600 disabled:opacity-50"
-                                                        >
-                                                            {isProcessing ? (
-                                                                <Loader2 className="h-4 w-4 animate-spin" />
-                                                            ) : (
-                                                                <CheckCircle2 className="h-4 w-4" />
-                                                            )}
-                                                            Aprobar
-                                                        </button>
-                                                        <button
-                                                            onClick={() => rechazar.mutate(s.id)}
-                                                            disabled={isProcessing}
-                                                            className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-sm font-semibold text-red-400 transition hover:bg-red-500/20 disabled:opacity-50"
-                                                        >
-                                                            <XCircle className="h-4 w-4" />
-                                                            Rechazar
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            )}
+                                                )}
 
-                                            {/* Notas si ya fue procesada */}
-                                            {s.estado !== "pendiente" && s.notas_admin && (
-                                                <div className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-3">
-                                                    <p className="text-xs font-medium text-slate-400">Notas del admin:</p>
-                                                    <p className="mt-1 text-sm text-slate-300">{s.notas_admin}</p>
-                                                </div>
-                                            )}
+                                                {s.estado === "pendiente" && (
+                                                    <div className="space-y-3">
+                                                        <div>
+                                                            <label className="mb-1.5 block text-xs font-medium text-slate-400">
+                                                                Notas internas (opcional)
+                                                            </label>
+                                                            <textarea
+                                                                rows={3}
+                                                                value={notasAdmin[s.id] ?? ""}
+                                                                onChange={(e) =>
+                                                                    setNotasAdmin((prev) => ({ ...prev, [s.id]: e.target.value }))
+                                                                }
+                                                                placeholder="Notas solo visibles para el admin..."
+                                                                className="w-full resize-none rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-primary focus:outline-none"
+                                                            />
+                                                        </div>
+                                                        <div className="flex gap-2">
+                                                            <button
+                                                                onClick={() => aprobar.mutate(s)}
+                                                                disabled={isProcessing}
+                                                                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-600 disabled:opacity-50"
+                                                            >
+                                                                {isProcessing ? (
+                                                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                                                ) : (
+                                                                    <CheckCircle2 className="h-4 w-4" />
+                                                                )}
+                                                                Aprobar
+                                                            </button>
+                                                            <button
+                                                                onClick={() => rechazar.mutate(s.id)}
+                                                                disabled={isProcessing}
+                                                                className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-sm font-semibold text-red-400 transition hover:bg-red-500/20 disabled:opacity-50"
+                                                            >
+                                                                <XCircle className="h-4 w-4" />
+                                                                Rechazar
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* Notas si ya fue procesada */}
+                                                {s.estado !== "pendiente" && s.notas_admin && (
+                                                    <div className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-3">
+                                                        <p className="text-xs font-medium text-slate-400">Notas del admin:</p>
+                                                        <p className="mt-1 text-sm text-slate-300">{s.notas_admin}</p>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 )}

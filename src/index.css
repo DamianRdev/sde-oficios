@@ -86,6 +86,40 @@
     --sidebar-border: 216 34% 17%;
     --sidebar-ring: 210 60% 65%;
   }
+
+  .dark {
+    --background: 222 47% 6%;
+    /* Fondo más oscuro */
+    --foreground: 214 32% 91%;
+
+    --card: 222 47% 10%;
+    --card-foreground: 214 32% 91%;
+
+    --popover: 222 47% 10%;
+    --popover-foreground: 214 32% 91%;
+
+    --primary: 210 60% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 216 34% 17%;
+    /* Fondo suave en dark mode */
+    --primary-dark: 210 60% 75%;
+
+    --secondary: 216 34% 17%;
+    --secondary-foreground: 214 32% 91%;
+
+    --muted: 216 34% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 216 34% 17%;
+    --accent-foreground: 214 32% 91%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 214 32% 91%;
+
+    --border: 216 34% 20%;
+    --input: 216 34% 20%;
+    --ring: 210 60% 65%;
+  }
 }
 
 /* ── Reset & base styles ───────────────────────────────────────── */
@@ -129,11 +163,12 @@
     font-family: 'Poppins', system-ui, sans-serif;
     font-weight: 700;
     line-height: 1.2;
-    color: #222222;
+    color: hsl(var(--foreground));
   }
 
   p {
     line-height: 1.7;
+    color: hsl(var(--muted-foreground));
   }
 
   /* Input font-size mínimo 16px para evitar zoom en iOS */
@@ -141,6 +176,9 @@
   textarea,
   select {
     font-size: 16px;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    border-color: hsl(var(--border));
   }
 
   @media (min-width: 640px) {
@@ -170,33 +208,33 @@
 
   /* Botón outline celeste */
   .btn-outline {
-    @apply border-2 border-sde-celeste text-sde-celeste font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 hover:bg-sde-celeste-claro active:scale-[0.98];
+    @apply border-2 border-primary text-primary font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 hover:bg-primary-light active:scale-[0.98] dark:border-primary/50 dark:text-primary-foreground;
     font-family: 'Poppins', sans-serif;
   }
 
   /* Card de oficio */
   .oficio-card {
-    @apply bg-white rounded-xl border border-gray-100 shadow-card transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5;
+    @apply bg-card text-card-foreground rounded-xl border border-border shadow-card transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5;
   }
 
   /* Badge celeste */
   .badge-celeste {
-    @apply bg-sde-celeste-claro text-sde-celeste text-xs font-semibold px-2.5 py-0.5 rounded-full;
+    @apply bg-primary-light text-primary text-xs font-semibold px-2.5 py-0.5 rounded-full dark:bg-primary/20;
   }
 
   /* Badge dorado (acento) */
   .badge-dorado {
-    @apply bg-sde-dorado-claro text-amber-700 text-xs font-semibold px-2.5 py-0.5 rounded-full;
+    @apply bg-sde-dorado-claro text-amber-900 text-xs font-semibold px-2.5 py-0.5 rounded-full dark:bg-yellow-500/20 dark:text-yellow-500;
   }
 
   /* Badge rojo */
   .badge-rojo {
-    @apply bg-sde-rojo-claro text-sde-rojo text-xs font-semibold px-2.5 py-0.5 rounded-full;
+    @apply bg-sde-rojo-claro text-sde-rojo text-xs font-semibold px-2.5 py-0.5 rounded-full dark:bg-red-500/20 dark:text-red-500;
   }
 
   /* Título de sección */
   .section-title {
-    @apply font-display text-2xl md:text-3xl font-bold text-sde-texto;
+    @apply font-display text-2xl md:text-3xl font-bold text-foreground;
   }
 
   /* Línea decorativa celeste-rojo (guiño bandera) */
@@ -212,11 +250,11 @@
   }
 
   .filter-pill.active {
-    @apply bg-sde-celeste text-white border-sde-celeste;
+    @apply bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/20;
   }
 
   .filter-pill.inactive {
-    @apply bg-white text-gray-600 border-gray-200 hover:border-sde-celeste hover:text-sde-celeste;
+    @apply bg-card text-muted-foreground border-border hover:border-primary hover:text-primary transition-all;
   }
 }
 

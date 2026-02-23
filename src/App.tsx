@@ -17,6 +17,7 @@ import AdminGaleria from "./pages/admin/AdminGaleria";
 import { AdminAuthProvider } from "./hooks/use-admin-auth";
 import { ProtectedAdminRoute } from "./components/admin/ProtectedAdminRoute";
 import WhatsAppFloat from "./components/WhatsAppFloat";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -103,15 +104,17 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AdminAuthProvider>
-          <AppRoutes />
-        </AdminAuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
+    <ThemeProvider defaultTheme="light" storageKey="sde-oficios-theme">
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AdminAuthProvider>
+            <AppRoutes />
+          </AdminAuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

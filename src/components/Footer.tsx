@@ -6,12 +6,12 @@ const WA_MESSAGE = encodeURIComponent("Hola! Te escribo desde SDE Oficios. Tengo
 
 const Footer = () => {
   return (
-    <footer className="bg-sde-texto text-white">
+    <footer className="bg-slate-950 text-white">
 
       {/* Franja tricolor superior */}
       <div className="flex h-1">
-        <div className="flex-1 bg-sde-celeste" />
-        <div className="flex-1 bg-white" />
+        <div className="flex-1 bg-primary" />
+        <div className="flex-1 bg-white/10" />
         <div className="flex-1 bg-sde-rojo" />
       </div>
 
@@ -21,26 +21,26 @@ const Footer = () => {
           {/* Columna 1: Marca */}
           <div>
             <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sde-celeste">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary shadow-sm shadow-primary/20">
                 <Wrench className="h-5 w-5 text-white" />
               </div>
               <div className="leading-none">
                 <span className="font-display text-[17px] font-bold text-white">SDE</span>
-                <span className="font-display text-[17px] font-bold text-sde-celeste"> Oficios</span>
+                <span className="font-display text-[17px] font-bold text-primary"> Oficios</span>
               </div>
             </Link>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-gray-400">
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-400">
               El directorio de profesionales del hogar para Santiago del Estero. Conectamos vecinos con oficios de confianza.
             </p>
-            <div className="mt-4 flex items-center gap-1.5 text-xs text-gray-500">
-              <MapPin className="h-3.5 w-3.5 text-sde-celeste" />
+            <div className="mt-4 flex items-center gap-1.5 text-xs text-slate-500">
+              <MapPin className="h-3.5 w-3.5 text-primary" />
               Santiago del Estero, Argentina
             </div>
           </div>
 
           {/* Columna 2: Navegación */}
           <div>
-            <h4 className="mb-4 font-display text-sm font-semibold uppercase tracking-wider text-gray-400">
+            <h4 className="mb-4 font-display text-sm font-semibold uppercase tracking-wider text-slate-500">
               Navegación
             </h4>
             <nav className="flex flex-col gap-2.5">
@@ -52,7 +52,7 @@ const Footer = () => {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="text-sm text-gray-400 hover:text-sde-celeste transition-colors"
+                  className="text-sm text-slate-400 hover:text-primary transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -62,10 +62,10 @@ const Footer = () => {
 
           {/* Columna 3: Contacto */}
           <div>
-            <h4 className="mb-4 font-display text-sm font-semibold uppercase tracking-wider text-gray-400">
+            <h4 className="mb-4 font-display text-sm font-semibold uppercase tracking-wider text-slate-500">
               Contacto
             </h4>
-            <p className="mb-4 text-sm leading-relaxed text-gray-400">
+            <p className="mb-4 text-sm leading-relaxed text-slate-400">
               ¿Tenés dudas, sugerencias o querés mejorar tu publicación?
               Escribinos directamente.
             </p>
@@ -81,15 +81,15 @@ const Footer = () => {
               "
             >
               <MessageCircle className="h-4 w-4 shrink-0" />
-              Escribinos por WhatsApp
+              WhatsApp
             </a>
           </div>
 
         </div>
 
         {/* Pie */}
-        <div className="mt-10 border-t border-white/10 pt-6 text-center">
-          <p className="text-xs text-gray-500">
+        <div className="mt-10 border-t border-white/5 pt-6 text-center">
+          <p className="text-xs text-slate-500">
             © {new Date().getFullYear()} SDE Oficios. Todos los derechos reservados.
           </p>
         </div>

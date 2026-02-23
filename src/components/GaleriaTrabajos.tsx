@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Images, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Images, X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 interface Foto {
@@ -18,20 +18,37 @@ interface Props {
 const GaleriaTrabajos = ({ profesionalId, profesionalNombre }: Props) => {
     const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
-    const { data: fotos = [] } = useQuery<Foto[]>({
+    const { data: fotos = [], isLoading, isError } = useQuery<Foto[]>({
         queryKey: ["galeria", profesionalId],
         queryFn: async () => {
-            const { data, error } = await supabase
-                .from("galeria_trabajos")
-                .select("id, url, descripcion, orden")
-                .eq("profesional_id", profesionalId)
-                .order("orden", { ascending: true })
-                .order("created_at", { ascending: true });
-            if (error) throw error;
-            return (data ?? []) as Foto[];
+            try {
+                const { data, error } = await supabase
+                    .from("galeria_trabajos")
+                    .select("id, url, descripcion, orden")
+                    .eq("profesional_id", profesionalId)
+                    .order("orden", { ascending: true })
+                    .order("created_at", { ascending: true });
+                if (error) throw error;
+                return (data ?? []) as Foto[];
+            } catch (e) {
+                console.error("Error en query de GaleriaTrabajos:", e);
+                throw e;
+            }
         },
         staleTime: 1000 * 60 * 5,
     });
+
+    if (isLoading) return (
+        <div className="flex h-32 items-center justify-center rounded-xl border border-dashed border-border bg-card/50">
+            <Loader2 className="h-6 w-6 animate-spin text-primary/40" />
+        </div>
+    );
+
+    if (isError) return (
+        <div className="rounded-xl border border-border bg-destructive/5 p-4 text-center">
+            <p className="text-xs text-destructive">No se pudieron cargar las fotos del portfolio.</p>
+        </div>
+    );
 
     if (fotos.length === 0) return null;
 
