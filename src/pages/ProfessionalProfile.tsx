@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import ResenaForm from "@/components/ResenaForm";
 import ResenasList from "@/components/ResenasList";
 import { useProfesional, registrarContactoWhatsApp } from "@/hooks/use-profesionales";
+import GaleriaTrabajos from "@/components/GaleriaTrabajos";
 
 const ProfessionalProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -234,6 +235,16 @@ const ProfessionalProfile = () => {
               </div>
             </div>
           </div>
+
+          {/* Galería de trabajos */}
+          {profesional.id && (
+            <div className="mb-6">
+              <GaleriaTrabajos
+                profesionalId={profesional.id}
+                profesionalNombre={nombre}
+              />
+            </div>
+          )}
 
           {/* Reseñas aprobadas */}
           <div className="mb-6">

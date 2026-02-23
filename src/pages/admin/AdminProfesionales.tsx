@@ -9,6 +9,7 @@ import {
     Loader2,
     Search,
     Download,
+    Images,
 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase, db } from "@/lib/supabase";
@@ -336,21 +337,30 @@ const AdminProfesionales = () => {
 
                                             {/* Acciones */}
                                             <td className="px-4 py-3 text-center">
-                                                <button
-                                                    onClick={() => {
-                                                        if (
-                                                            confirm(
-                                                                `¿Eliminar a ${p.nombre}? Esta acción no se puede deshacer.`
-                                                            )
-                                                        ) {
-                                                            eliminar.mutate(p.id);
-                                                        }
-                                                    }}
-                                                    title="Eliminar profesional"
-                                                    className="rounded-lg p-1.5 text-red-500/60 transition-colors hover:bg-red-500/10 hover:text-red-400"
-                                                >
-                                                    <Trash2 className="h-3.5 w-3.5" />
-                                                </button>
+                                                <div className="flex items-center justify-center gap-1">
+                                                    <Link
+                                                        to={`/admin/galeria/${p.id}`}
+                                                        title="Gestionar galería"
+                                                        className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-700 hover:text-white"
+                                                    >
+                                                        <Images className="h-3.5 w-3.5" />
+                                                    </Link>
+                                                    <button
+                                                        onClick={() => {
+                                                            if (
+                                                                confirm(
+                                                                    `¿Eliminar a ${p.nombre}? Esta acción no se puede deshacer.`
+                                                                )
+                                                            ) {
+                                                                eliminar.mutate(p.id);
+                                                            }
+                                                        }}
+                                                        title="Eliminar profesional"
+                                                        className="rounded-lg p-1.5 text-red-500/60 transition-colors hover:bg-red-500/10 hover:text-red-400"
+                                                    >
+                                                        <Trash2 className="h-3.5 w-3.5" />
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))

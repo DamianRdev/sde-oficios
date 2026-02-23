@@ -13,6 +13,7 @@ import AdminSolicitudes from "./pages/admin/AdminSolicitudes";
 import AdminProfesionales from "./pages/admin/AdminProfesionales";
 import AdminResenas from "./pages/admin/AdminResenas";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminGaleria from "./pages/admin/AdminGaleria";
 import { AdminAuthProvider } from "./hooks/use-admin-auth";
 import { ProtectedAdminRoute } from "./components/admin/ProtectedAdminRoute";
 import WhatsAppFloat from "./components/WhatsAppFloat";
@@ -78,6 +79,14 @@ const AppRoutes = () => {
           element={
             <ProtectedAdminRoute>
               <AdminAnalytics />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin/galeria/:id"
+          element={
+            <ProtectedAdminRoute>
+              <AdminGaleria />
             </ProtectedAdminRoute>
           }
         />
