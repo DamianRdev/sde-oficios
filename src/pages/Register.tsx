@@ -510,73 +510,6 @@ const Register = () => {
                 <Label htmlFor="descripcion">Contanos sobre vos</Label>
                 <div className="flex items-center gap-2">
 
-                  {/* Botón Mejorar con IA */}
-                  {GEMINI_KEY && (() => {
-                    /** Handler extraído para poder llamarlo desde el useEffect de reintento */
-                    const handleMejorarIA = async () => {
-                      if (iaLoading || iaCountdown > 0 || !form.descripcion.trim()) return;
-                      setIaLoading(true);
-                      setIaMejoro(false);
-                      const resultado = await mejorarTextoConIA(form.descripcion);
-                      setIaLoading(false);
-                      if ("texto" in resultado) {
-                        handleChange("descripcion", resultado.texto);
-                        setIaMejoro(true);
-                        setTimeout(() => setIaMejoro(false), 4000);
-                      } else if (resultado.error.includes("Demasiadas")) {
-                        // 429 → iniciar countdown de 35 segundos y reintentar automáticamente
-                        let secs = 35;
-                        setIaCountdown(secs);
-                        const interval = setInterval(() => {
-                          secs -= 1;
-                          setIaCountdown(secs);
-                          if (secs <= 0) {
-                            clearInterval(interval);
-                            // Reintento automático
-                            setIaLoading(true);
-                            mejorarTextoConIA(form.descripcion).then((r) => {
-                              setIaLoading(false);
-                              if ("texto" in r) {
-                                handleChange("descripcion", r.texto);
-                                setIaMejoro(true);
-                                setTimeout(() => setIaMejoro(false), 4000);
-                              } else {
-                                toast({ title: "No se pudo mejorar", description: r.error, variant: "destructive" });
-                              }
-                            });
-                          }
-                        }, 1000);
-                      } else {
-                        toast({ title: "No se pudo mejorar", description: resultado.error, variant: "destructive" });
-                      }
-                    };
-
-                    const enCooldown = iaCountdown > 0;
-                    return (
-                      <button
-                        type="button"
-                        disabled={iaLoading || !form.descripcion.trim() || loading}
-                        onClick={handleMejorarIA}
-                        className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all disabled:cursor-not-allowed
-                          ${enCooldown
-                            ? "border-amber-300 bg-amber-50 text-amber-700"
-                            : "border-violet-300 bg-violet-50 text-violet-700 hover:bg-violet-100 disabled:opacity-40"
-                          }`}
-                      >
-                        {iaLoading
-                          ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          : enCooldown
-                            ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            : <Sparkles className="h-3.5 w-3.5" />}
-                        {iaLoading
-                          ? "Mejorando…"
-                          : enCooldown
-                            ? `Reintentando en ${iaCountdown}s…`
-                            : "✨ Mejorar con IA"}
-                      </button>
-                    );
-                  })()}
-
 
                   {/* Botón preview */}
                   <button
@@ -596,17 +529,8 @@ const Register = () => {
                 onChange={(e) => handleChange("descripcion", e.target.value)}
                 rows={4}
                 maxLength={500}
-                disabled={loading || iaLoading}
-                className={iaLoading ? "opacity-60" : ""}
+                disabled={loading}
               />
-
-              {/* Feedback de IA */}
-              {iaMejoro && (
-                <div className="flex items-center gap-2 rounded-lg border border-violet-200 bg-violet-50 px-3 py-2 text-xs font-medium text-violet-700 animate-fade-in">
-                  <Sparkles className="h-3.5 w-3.5 shrink-0" />
-                  ¡Texto mejorado por IA! Revisalo y editalo si querés.
-                </div>
-              )}
 
               <p className="text-xs text-gray-400">{form.descripcion.length}/500 caracteres</p>
 
