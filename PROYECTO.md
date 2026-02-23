@@ -18,6 +18,7 @@
 | Storage fotos | Supabase Storage |
 | Email | EmailJS |
 | IA (descripciones) | ~~Google Gemini 2.0 Flash~~ ❌ eliminado |
+| Métricas | Vercel Analytics + Speed Insights |
 | Deploy | Vercel |
 | Control de versiones | GitHub |
 
@@ -159,8 +160,8 @@ VITE_ADMIN_EMAIL=damian.exequiel.r@gmail.com
 - [ ] Imagen OG real (`public/og-image.png`) para compartir en redes
 - [ ] Confirmar que EmailJS envía correctamente en producción
 - [ ] Testear PWA instalable en un dispositivo Android real
-- [ ] Testear PWA instalable en iPhone (Safari → botón compartir → Agregar a inicio)
-- [ ] Agregar Google Analytics o similar para métricas de visitas
+- [x] Testear PWA instalable en iPhone (Safari → botón compartir → Agregar a inicio)
+- [x] Agregar Google Analytics o similar para métricas de visitas (Implementado Vercel Analytics)
 
 ### 🟢 Mejoras a futuro
 - [ ] Notificaciones push cuando llega una nueva solicitud de registro

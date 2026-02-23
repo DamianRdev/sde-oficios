@@ -18,6 +18,8 @@ import { AdminAuthProvider } from "./hooks/use-admin-auth";
 import { ProtectedAdminRoute } from "./components/admin/ProtectedAdminRoute";
 import WhatsAppFloat from "./components/WhatsAppFloat";
 import { ThemeProvider } from "./components/ThemeProvider";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -113,6 +115,8 @@ const App = () => (
             <AppRoutes />
           </AdminAuthProvider>
         </BrowserRouter>
+        <Analytics />
+        <SpeedInsights />
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
