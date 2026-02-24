@@ -41,7 +41,7 @@ const HowItWorks = () => {
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md">
                 <step.icon className="h-6 w-6" />
               </div>
-              <span className="mb-1 text-xs font-semibold text-accent">Paso {index + 1}</span>
+              <span className="mb-1 text-[10px] font-black uppercase tracking-widest text-primary">Paso {index + 1}</span>
               <h3 className="mb-2 font-display text-lg font-semibold text-foreground">{step.title}</h3>
               <p className="text-sm text-muted-foreground">{step.description}</p>
             </div>
