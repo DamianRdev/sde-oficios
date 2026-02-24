@@ -157,7 +157,7 @@ VITE_ADMIN_EMAIL=damian.exequiel.r@gmail.com
 - [ ] Probar flujo completo de registro → aprobación → perfil público
 
 ### 🟡 Importantes (primera semana de uso)
-- [ ] Imagen OG real (`public/og-image.png`) para compartir en redes
+- [x] Imagen OG real (`public/og-image.png`) para compartir en redes
 - [ ] Confirmar que EmailJS envía correctamente en producción
 - [ ] Testear PWA instalable en un dispositivo Android real
 - [x] Testear PWA instalable en iPhone (Safari → botón compartir → Agregar a inicio)
