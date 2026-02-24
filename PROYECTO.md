@@ -149,7 +149,7 @@ VITE_ADMIN_EMAIL=damian.exequiel.r@gmail.com
 ## 🔄 Pendientes y mejoras futuras
 
 ### 🔴 Críticos (antes de lanzar públicamente)
-- [ ] Subir íconos PNG reales a `public/` (pwa-192x192.png, pwa-512x512.png)
+- [x] Subir íconos PNG reales a `public/` (pwa-192x192.png, pwa-512x512.png)
 - [ ] Cargar todas las variables de entorno en Vercel
 - [ ] Configurar dominio personalizado en Vercel (si corresponde)
 - [ ] Ejecutar migraciones SQL de redes sociales en Supabase producción:
