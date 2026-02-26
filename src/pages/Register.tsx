@@ -182,7 +182,7 @@ const TagInput = ({
                 <button
                   type="button"
                   onClick={() => removeTag(tag)}
-                  className="group ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary/20 text-primary transition-colors hover:bg-sde-rojo hover:text-white"
+                  className="group ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary/20 text-primary transition-colors hover:bg-sde-rojo dark:hover:bg-red-600 hover:text-white"
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -527,7 +527,7 @@ const Register = () => {
                     <button
                       type="button"
                       onClick={(e) => { e.stopPropagation(); setFoto(null); setFotoPreview(null); if (fileRef.current) fileRef.current.value = ""; }}
-                      className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-sde-rojo text-white shadow-lg active:scale-90"
+                      className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-sde-rojo dark:bg-red-600 text-white shadow-lg active:scale-90"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -628,7 +628,7 @@ const Register = () => {
                     <button
                       type="button"
                       onClick={() => removeFotoGaleria(idx)}
-                      className="absolute -right-1.5 -top-1.5 rounded-full bg-sde-rojo p-1.5 text-white shadow-lg transition-all hover:scale-110 active:scale-95"
+                      className="absolute -right-1.5 -top-1.5 rounded-full bg-sde-rojo dark:bg-red-600 p-1.5 text-white shadow-lg transition-all hover:scale-110 active:scale-95"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -651,48 +651,50 @@ const Register = () => {
 
             {/* Descripción + Vista previa */}
             <div className="space-y-3">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <Label htmlFor="descripcion" className="font-bold">Contanos sobre vos</Label>
-                <button
-                  type="button"
-                  onClick={() => setShowPreview(!showPreview)}
-                  className={`inline-flex items-center gap-1.5 rounded-xl border px-4 py-2 text-xs font-bold transition-all active:scale-95 ${showPreview
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-primary-light text-primary border-primary/20 hover:bg-primary/10"
-                    }`}
-                >
-                  {showPreview ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                  {showPreview ? "Ocultar vista previa" : "Ver vista previa"}
-                </button>
-              </div>
-              <Textarea
-                id="descripcion"
-                placeholder="Ej: Tengo 10 años de experiencia, trabajos garantizados, presupuesto sin cargo..."
-                value={form.descripcion}
-                className="rounded-xl bg-muted/30 focus:bg-card transition-all placeholder:text-muted-foreground/50"
-                onChange={(e) => handleChange("descripcion", e.target.value)}
-                rows={4}
-                maxLength={500}
-                disabled={loading}
-              />
-              <div className="flex items-center justify-between">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Revisá tu ortografía</p>
-                <p className="text-[11px] font-mono text-muted-foreground">{form.descripcion.length}/500</p>
-              </div>
-
-              {showPreview && (
-                <div className="animate-in fade-in slide-in-from-top-4 duration-300 pt-4">
-                  <p className="mb-4 text-center text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Así verán tu perfil los clientes</p>
-                  <CardPreview
-                    nombre={form.nombre}
-                    categoria={categoriaNombrePreview}
-                    zona={zonaNombrePreview}
-                    descripcion={form.descripcion}
-                    servicios={[categoriaNombrePreview, ...trabajosExtra].filter(Boolean)}
-                    fotoPreview={fotoPreview}
-                  />
+              <div className="flex flex-col space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <Label htmlFor="descripcion" className="font-bold">Contanos sobre vos</Label>
+                  <button
+                    type="button"
+                    onClick={() => setShowPreview(!showPreview)}
+                    className={`inline-flex items-center gap-1.5 rounded-xl border px-4 py-2 text-xs font-bold transition-all active:scale-95 ${showPreview
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-primary-light text-primary border-primary/20 hover:bg-primary/10"
+                      }`}
+                  >
+                    {showPreview ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                    {showPreview ? "Ocultar vista previa" : "Ver vista previa"}
+                  </button>
                 </div>
-              )}
+                <Textarea
+                  id="descripcion"
+                  placeholder="Ej: Tengo 10 años de experiencia, trabajos garantizados, presupuesto sin cargo..."
+                  value={form.descripcion}
+                  className="rounded-xl bg-muted/30 focus:bg-card transition-all placeholder:text-muted-foreground/50"
+                  onChange={(e) => handleChange("descripcion", e.target.value)}
+                  rows={4}
+                  maxLength={500}
+                  disabled={loading}
+                />
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Revisá tu ortografía</p>
+                  <p className="text-[11px] font-mono text-muted-foreground">{form.descripcion.length}/500</p>
+                </div>
+
+                {showPreview && (
+                  <div className="animate-in fade-in slide-in-from-top-4 duration-300 pt-4">
+                    <p className="mb-4 text-center text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Así verán tu perfil los clientes</p>
+                    <CardPreview
+                      nombre={form.nombre}
+                      categoria={categoriaNombrePreview}
+                      zona={zonaNombrePreview}
+                      descripcion={form.descripcion}
+                      servicios={[categoriaNombrePreview, ...trabajosExtra].filter(Boolean)}
+                      fotoPreview={fotoPreview}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Redes sociales */}
@@ -704,12 +706,17 @@ const Register = () => {
               >
                 <div className="flex items-center gap-4">
                   <div className="flex items-center -space-x-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white ring-2 ring-background"><Facebook className="h-4 w-4" /></div>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#8134AF] text-white ring-2 ring-background"><Instagram className="h-4 w-4" /></div>
+                    <div className="flex z-30 h-8 w-8 items-center justify-center rounded-lg bg-[#1877F2] text-white ring-2 ring-background shadow-sm"><Facebook className="h-4 w-4" /></div>
+                    <div className="flex z-20 h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-[#FFDC80] via-[#FD1D1D] to-[#405DE6] text-white ring-2 ring-background shadow-sm"><Instagram className="h-4 w-4" /></div>
+                    <div className="flex z-10 h-8 w-8 items-center justify-center rounded-lg bg-black text-white ring-2 ring-background shadow-sm">
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 15.68a6.34 6.34 0 0 0 6.27 6.36 6.37 6.37 0 0 0 6.33-6.19V10.5a8.4 8.4 0 0 0 4.39 1.63v-3.41a4.91 4.91 0 0 1-2.4-1.03z" />
+                      </svg>
+                    </div>
                   </div>
                   <div>
                     <p className="text-sm font-bold text-foreground">Vincular redes sociales</p>
-                    <p className="text-[11px] text-muted-foreground">Opcional para dar más confianza.</p>
+                    <p className="text-[11px] text-muted-foreground">Facebook, Instagram, TikTok</p>
                   </div>
                 </div>
                 <ChevronDown className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-300 ${mostrarRedes ? "rotate-180" : ""}`} />

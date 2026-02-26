@@ -15,6 +15,7 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background border-b border-border shadow-sm">
+      <div className="sde-ribbon" />
       <div className="container flex h-16 items-center justify-between">
 
         {/* Logo */}
@@ -91,8 +92,8 @@ const Header = () => {
                   to={link.to}
                   onClick={() => setMenuOpen(false)}
                   className={`px-4 py-3 rounded-xl text-sm font-bold transition-all active:bg-accent ${location.pathname === link.to
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-primary hover:bg-primary/5"
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-primary hover:bg-primary/5"
                     }`}
                 >
                   {link.label}

@@ -36,9 +36,12 @@ const AppRoutes = () => {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith("/admin");
 
-  // Reset de scroll al cambiar de ruta
+  // Reset de scroll al cambiar de ruta — excepto cuando volvemos a una sección específica
   useEffect(() => {
-    window.scrollTo(0, 0);
+    const state = location.state as { scrollTo?: string } | null;
+    if (!state?.scrollTo) {
+      window.scrollTo(0, 0);
+    }
   }, [location.pathname]);
 
   return (

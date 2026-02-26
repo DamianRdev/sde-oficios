@@ -1,17 +1,5 @@
 import { useState, useRef } from "react";
-import { Search, X, MapPin, Zap } from "lucide-react";
-
-// Categorías más buscadas con emoji de oficio
-const CATEGORIAS_RAPIDAS = [
-  { slug: "plomero", label: "Plomero", emoji: "🔧" },
-  { slug: "electricista", label: "Electricista", emoji: "⚡" },
-  { slug: "albanil", label: "Albañil", emoji: "🧱" },
-  { slug: "gasista", label: "Gasista", emoji: "🔥" },
-  { slug: "pintor", label: "Pintor", emoji: "🖌️" },
-  { slug: "carpintero", label: "Carpintero", emoji: "🪵" },
-  { slug: "tecnico", label: "Técnico", emoji: "📱" },
-  { slug: "jardinero", label: "Jardinero", emoji: "🌿" },
-];
+import { Search, X } from "lucide-react";
 
 interface HeroProps {
   onScrollToProfessionals?: () => void;
@@ -19,7 +7,7 @@ interface HeroProps {
   onBusqueda?: (termino: string) => void;
 }
 
-const Hero = ({ onScrollToProfessionals, onCategoriaRapida, onBusqueda }: HeroProps) => {
+const Hero = ({ onScrollToProfessionals, onBusqueda }: HeroProps) => {
   const [termino, setTermino] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -32,108 +20,86 @@ const Hero = ({ onScrollToProfessionals, onCategoriaRapida, onBusqueda }: HeroPr
     if (e.key === "Enter") handleBuscar();
   };
 
-  const handleCategoria = (slug: string) => {
-    if (onCategoriaRapida) onCategoriaRapida(slug);
-    if (onScrollToProfessionals) onScrollToProfessionals();
-  };
-
   return (
-    <section className="relative overflow-hidden bg-background">
-      {/* Fondo con gradiente sutil para premium feel en dark mode */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-sde-rojo/5 pointer-events-none" />
+    <section className="relative overflow-hidden bg-background text-foreground transition-colors">
+      {/* Decorative gradient for dark premium feel */}
+      <div className="absolute inset-0 bg-gradient-to-br from-sde-rojo/5 via-transparent to-transparent pointer-events-none" />
 
-      {/* Franja celeste superior */}
-      <div className="h-1.5 w-full bg-sde-celeste/80" />
-
-      <div className="container relative py-8 md:py-20 px-4">
-        {/* Chip de ubicación */}
-        <div className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary shadow-sm">
-          <MapPin className="h-3 w-3" />
-          Santiago del Estero
+      <div className="container relative py-14 md:py-24 px-4 max-w-5xl mx-auto">
+        {/* Top Badge */}
+        <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-sde-rojo/40 dark:border-red-500/40 bg-sde-rojo/10 dark:bg-red-500/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest text-sde-rojo dark:text-red-500">
+          <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-[pulse_2s_ease-in-out_infinite]" />
+          120+ PROFESIONALES ACTIVOS
         </div>
 
-        {/* Título — premium typography */}
-        <h1 className="mb-4 font-display text-4xl font-black leading-[1.1] text-foreground sm:text-5xl md:text-7xl tracking-tight">
-          Encontrá tu{" "}
-          <span className="relative inline-block">
-            <span className="relative z-10 text-primary">oficio</span>
-            <span className="absolute -bottom-1 left-0 h-[6px] w-full rounded-full bg-sde-dorado/40 -rotate-1" />
-          </span>{" "}
-          ahora
+        {/* Main Title */}
+        <h1 className="mb-6 font-display text-[65px] md:text-[95px] lg:text-[115px] font-black leading-[0.85] tracking-tight uppercase" style={{ wordSpacing: '-0.1em' }}>
+          <span className="block text-foreground">TU OFICIO,</span>
+          <span className="block text-sde-rojo dark:text-red-500">A UN TOQUE.</span>
         </h1>
-        <p className="mb-8 max-w-lg text-sm font-medium text-muted-foreground md:text-lg leading-relaxed">
-          La red más grande de <span className="text-foreground font-bold">profesionales santiagueños</span>.
-          Contactá directo sin intermediarios.
+
+        {/* Subtitle */}
+        <p className="mb-10 max-w-xl text-[17px] md:text-[20px] font-medium text-muted-foreground leading-relaxed">
+          Electricistas, plomeros, gasistas y más en Santiago <span className="hidden sm:inline"><br /></span>
+          del Estero. Verificados, con reseñas reales.
         </p>
 
-        {/* ── Buscador principal ─────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row gap-3 max-w-2xl">
+        {/* ── Buscador principal ── */}
+        <div className="flex flex-col sm:flex-row gap-3 max-w-2xl mb-12">
           <div className="relative flex-1 group">
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <Search className="absolute left-5 top-1/2 h-[22px] w-[22px] -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <input
               ref={inputRef}
               type="text"
-              placeholder="¿Qué servicio necesitás hoy?"
+              placeholder="¿Qué oficio necesitás?"
               value={termino}
               onChange={(e) => setTermino(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="h-14 w-full rounded-2xl border-2 border-border bg-card/80 backdrop-blur-sm pl-12 pr-10 text-base font-medium text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:bg-card focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all shadow-lg shadow-black/5"
+              className="h-[64px] w-full rounded-[18px] border border-border bg-card pl-14 pr-10 text-[18px] font-medium text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:bg-card focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all shadow-sm"
             />
             {termino && (
               <button
                 onClick={() => { setTermino(""); inputRef.current?.focus(); }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-sde-rojo transition-colors p-1"
+                className="absolute right-5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-sde-rojo dark:hover:text-red-500 transition-colors p-1"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </button>
             )}
           </div>
           <button
             onClick={handleBuscar}
-            className="h-14 rounded-2xl bg-sde-rojo px-8 font-display text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-sde-rojo/20 transition-all hover:bg-[#B50D0D] hover:shadow-sde-rojo/30 active:scale-[0.97] active:shadow-inner"
+            className="h-[64px] rounded-[18px] bg-sde-rojo px-10 font-bold text-[18px] text-white transition-all hover:bg-[#B50D0D] active:scale-[0.98] shrink-0 shadow-sm"
           >
             Buscar
           </button>
         </div>
 
-        {/* ── Categorías rápidas — scroll horizontal ─────────────────── */}
-        <div className="mt-10">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="h-px flex-1 bg-border/50" />
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
-              Tendencias
-            </p>
-            <div className="h-px flex-1 bg-border/50" />
+        {/* ── Stats ── */}
+        <div className="grid grid-cols-3 gap-4 md:gap-14 border-t border-border pt-8">
+          <div>
+            <div className="font-display font-black text-4xl md:text-[45px] leading-none text-foreground mb-2 tracking-tight">
+              120+
+            </div>
+            <div className="text-[11px] font-medium uppercase tracking-[0.15em] text-muted-foreground">
+              PROFESIONALES
+            </div>
           </div>
-
-          <div className="flex gap-2.5 overflow-x-auto pb-4 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {CATEGORIAS_RAPIDAS.map((cat) => (
-              <button
-                key={cat.slug}
-                onClick={() => handleCategoria(cat.slug)}
-                className="flex shrink-0 items-center gap-2 rounded-2xl border border-border bg-card/50 backdrop-blur-sm px-5 py-3 text-sm font-bold text-foreground shadow-sm transition-all hover:border-primary hover:bg-primary/5 hover:text-primary hover:shadow-md hover:-translate-y-0.5 active:scale-95"
-              >
-                <span role="img" aria-label={cat.label} className="text-lg leading-none filter drop-shadow-sm">
-                  {cat.emoji}
-                </span>
-                {cat.label}
-              </button>
-            ))}
+          <div>
+            <div className="font-display font-black text-4xl md:text-[45px] leading-none text-foreground mb-2 tracking-tight">
+              8
+            </div>
+            <div className="text-[11px] font-medium uppercase tracking-[0.15em] text-muted-foreground">
+              CATEGORÍAS
+            </div>
           </div>
-        </div>
-
-        {/* ── Stats rápidos ───────────────────────────────────────────── */}
-        <div className="mt-4 flex items-center gap-2 text-[11px] font-bold text-muted-foreground/80 bg-muted/30 w-fit px-4 py-2 rounded-full border border-border/50">
-          <div className="flex h-2 w-2 rounded-full bg-sde-dorado animate-pulse" />
-          <span className="uppercase tracking-wider">Conexión directa: <strong className="text-foreground">Sin comisiones</strong></span>
-        </div>
-      </div>
-
-      {/* Decoración (mejorada para dark mode) */}
-      <div className="pointer-events-none absolute right-[-5%] top-[-10%] hidden h-[120%] w-1/2 lg:block opacity-50 dark:opacity-20">
-        <div className="absolute right-0 top-1/2 -translate-y-1/2">
-          <div className="h-96 w-96 rounded-full border-[20px] border-primary/5" />
-          <div className="absolute left-20 top-20 h-64 w-64 rounded-full border-[10px] border-sde-dorado/5 animate-slow-spin" />
+          <div>
+            <div className="font-display font-black text-4xl md:text-[45px] leading-none text-foreground mb-2 flex items-baseline gap-1 tracking-tight">
+              4.8<span className="text-3xl md:text-[34px] text-sde-dorado">★</span>
+            </div>
+            <div className="text-[11px] font-medium uppercase tracking-[0.15em] text-muted-foreground">
+              VALORACIÓN MEDIA
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -8,14 +8,10 @@ const Footer = () => {
   return (
     <footer className="bg-slate-950 text-white">
 
-      {/* Franja tricolor superior */}
-      <div className="flex h-1">
-        <div className="flex-1 bg-primary" />
-        <div className="flex-1 bg-white/10" />
-        <div className="flex-1 bg-sde-rojo" />
-      </div>
+      {/* Franja decorativa SDE */}
+      <div className="sde-ribbon" />
 
-      <div className="container py-12">
+      <div className="container py-8 md:py-12">
         <div className="grid gap-10 md:grid-cols-3">
 
           {/* Columna 1: Marca */}
@@ -38,8 +34,8 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Columna 2: Navegación */}
-          <div>
+          {/* Columna 2: Navegación — oculta en móviles, ya está en el Header */}
+          <div className="hidden md:block">
             <h4 className="mb-4 font-display text-sm font-semibold uppercase tracking-wider text-slate-500">
               Navegación
             </h4>
@@ -65,7 +61,7 @@ const Footer = () => {
             <h4 className="mb-4 font-display text-sm font-semibold uppercase tracking-wider text-slate-500">
               Contacto
             </h4>
-            <p className="mb-4 text-sm leading-relaxed text-slate-400">
+            <p className="mb-4 hidden text-sm leading-relaxed text-slate-400 md:block">
               ¿Tenés dudas, sugerencias o querés mejorar tu publicación?
               Escribinos directamente.
             </p>
