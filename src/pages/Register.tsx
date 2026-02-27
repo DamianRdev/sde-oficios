@@ -43,12 +43,27 @@ const EMAILJS_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY ?? "";
 const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL ?? "";
 const MAX_FOTO_MB = 3;
 
-// Tags de oficios adicionales predefinidos (para el selector rápido)
+// Tags de oficios y servicios predefinidos según la categoría principal seleccionada
+const SUGERENCIAS_POR_CATEGORIA: Record<string, string[]> = {
+  "electricista": ["Instalación domiciliaria", "Tableros eléctricos", "Iluminación LED", "Trifásica", "Urgencias 24hs"],
+  "plomero": ["Pérdidas de agua", "Destapes", "Instalación de sanitarios", "Cañerías termofusión", "Urgencias 24hs"],
+  "gasista": ["Detección de pérdidas", "Estufas y calefones", "Instalaciones nuevas", "Planos aprobados", "Urgencias 24hs"],
+  "tecnico-electrodomesticos": ["Lavarropas automáticos", "Heladeras No Frost", "Microondas", "Televisores LED", "Presupuestos a domicilio"],
+  "pintor": ["Pintura interior", "Pintura exterior", "Impermeabilización", "Enduído y lijado", "Revestimientos texturados"],
+  "albanil": ["Refacciones generales", "Construcción en seco", "Colocación de cerámicos", "Revoques finos", "Techumbres"],
+  "carpintero": ["Muebles de cocina", "Muebles a medida", "Restauración", "Aberturas", "Placards y vestidores"],
+  "cerrajero": ["Apertura de autos", "Apertura de viviendas", "Copias de llaves", "Cambio de cerraduras", "Urgencias 24hs"],
+  "jardinero": ["Corte de césped", "Poda de árboles", "Mantenimiento mensual", "Diseño de jardines", "Sistemas de riego"],
+  "aire-acondicionado": ["Instalación de splits", "Carga de gas", "Limpieza de filtros", "Reparación de plaquetas", "Desinstalación"],
+  "techista": ["Reparación de goteras", "Colocación de chapas", "Membranas asfálticas", "Limpieza de canaletas", "Aislación térmica"],
+};
+
+// Fallback genérico cuando no hay categoría seleccionada
 const OFICIOS_ADICIONALES = [
   "Pintura", "Plomería", "Electricidad", "Albañilería", "Gasista", "Carpintería",
-  "Herrería", "Techista", "Jardinería", "Fumigación", "Limpieza", "Mudanzas",
-  "Aire acondicionado", "Cerrajería", "Computadoras", "Refrigeración",
+  "Herrería", "Techista", "Jardinería", "Fumigación",
 ];
+
 
 // ── Mini preview de card ─────────────────────────────────────────────────────
 const CardPreview = ({
@@ -144,8 +159,8 @@ const CardPreview = ({
 
 // ── Componente de tag de servicio ────────────────────────────────────────────
 const TagInput = ({
-  tags, onChange, disabled,
-}: { tags: string[]; onChange: (tags: string[]) => void; disabled: boolean }) => {
+  tags, onChange, disabled, sugerencias
+}: { tags: string[]; onChange: (tags: string[]) => void; disabled: boolean; sugerencias: string[] }) => {
   const [input, setInput] = useState("");
 
   const addTag = (val: string) => {
@@ -219,7 +234,7 @@ const TagInput = ({
       <div className="pt-1">
         <p className="mb-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Sugerencias rápidas:</p>
         <div className="flex flex-wrap gap-2">
-          {OFICIOS_ADICIONALES.filter((o) => !tags.includes(o)).slice(0, 8).map((oficio) => (
+          {sugerencias.filter((o) => !tags.includes(o)).slice(0, 8).map((oficio) => (
             <button
               key={oficio}
               type="button"
@@ -492,7 +507,15 @@ const Register = () => {
   }
 
   // ─── Datos para preview ─────────────────────────────────────────────────
-  const categoriaNombrePreview = categorias.find((c) => c.id === form.categoria_id)?.nombre ?? "";
+  const categoriaSeleccionada = categorias.find((c) => c.id === form.categoria_id);
+  const categoriaNombrePreview = categoriaSeleccionada?.nombre ?? "";
+  const categoriaSlug = categoriaSeleccionada?.slug ?? "";
+
+  // Si hay slug, buscamos las sugerencias específicas de esa categoría. Si no, usamos las predeterminadas.
+  const sugerenciasDinamicas = categoriaSlug && SUGERENCIAS_POR_CATEGORIA[categoriaSlug]
+    ? SUGERENCIAS_POR_CATEGORIA[categoriaSlug]
+    : OFICIOS_ADICIONALES;
+
   const zonaNombrePreview = zonas.find((z) => z.id === form.zona_id)?.nombre ?? "";
 
   return (
@@ -606,7 +629,7 @@ const Register = () => {
                 <Wrench className="h-4 w-4 text-primary" />
                 Otros trabajos que realizás
               </Label>
-              <TagInput tags={trabajosExtra} onChange={setTrabajosExtra} disabled={loading} />
+              <TagInput tags={trabajosExtra} onChange={setTrabajosExtra} disabled={loading} sugerencias={sugerenciasDinamicas} />
             </div>
 
             {/* Galería de trabajos */}
