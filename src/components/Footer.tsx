@@ -84,10 +84,15 @@ const Footer = () => {
         </div>
 
         {/* Pie */}
-        <div className="mt-10 border-t border-white/5 pt-6 text-center">
-          <p className="text-xs text-slate-500">
+        <div className="mt-10 border-t border-white/5 pt-6 flex flex-col items-center justify-center gap-4 md:flex-row md:justify-between text-xs text-slate-500">
+          <p>
             © {new Date().getFullYear()} SDE Oficios. Todos los derechos reservados.
           </p>
+          <div className="flex items-center gap-4">
+            <Link to="/terminos" className="hover:text-primary transition-colors">Términos y Condiciones</Link>
+            <span className="opacity-20">|</span>
+            <Link to="/privacidad" className="hover:text-primary transition-colors">Privacidad</Link>
+          </div>
         </div>
       </div>
     </footer>

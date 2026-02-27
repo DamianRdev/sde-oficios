@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import ProfessionalProfile from "./pages/ProfessionalProfile";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
+import Terminos from "./pages/legal/Terminos";
+import Privacidad from "./pages/legal/Privacidad";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminSolicitudes from "./pages/admin/AdminSolicitudes";
@@ -51,6 +53,8 @@ const AppRoutes = () => {
         <Route path="/" element={<Index />} />
         <Route path="/profesional/:id" element={<ProfessionalProfile />} />
         <Route path="/registrarse" element={<Register />} />
+        <Route path="/terminos" element={<Terminos />} />
+        <Route path="/privacidad" element={<Privacidad />} />
 
         {/* Rutas del panel de administración */}
         <Route path="/admin/login" element={<AdminLogin />} />
