@@ -36,6 +36,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useCategorias, useZonas } from "@/hooks/use-categorias-zonas";
 import { supabase, db } from "@/lib/supabase";
 import emailjs from "@emailjs/browser";
+import * as z from "zod";
 
 const EMAILJS_SERVICE = import.meta.env.VITE_EMAILJS_SERVICE_ID ?? "";
 const EMAILJS_TEMPLATE = import.meta.env.VITE_EMAILJS_TEMPLATE_SOLICITUD ?? "";
@@ -63,6 +64,19 @@ const OFICIOS_ADICIONALES = [
   "Pintura", "Plomería", "Electricidad", "Albañilería", "Gasista", "Carpintería",
   "Herrería", "Techista", "Jardinería", "Fumigación",
 ];
+
+// --- Zod Schema para Validación Estricta ---
+const registerSchema = z.object({
+  nombre: z.string().min(2, "El nombre es muy corto").max(60, "El nombre es muy largo").regex(/^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/, "Solo letras permitidas"),
+  telefono: z.string().min(10, "El teléfono es muy corto").max(15, "El teléfono es muy largo").regex(/^[0-9+\s]+$/, "Solo números y signo + permitidos"),
+  categoria_id: z.string().min(1, "Seleccioná un oficio principal"),
+  zona_id: z.string().min(1, "Seleccioná una zona"),
+  descripcion: z.string().max(300, "Máximo 300 caracteres").optional(),
+  horarios: z.string().max(100, "Máximo 100 caracteres").optional(),
+  facebook_url: z.string().max(255, "URL demasiado larga").optional(),
+  instagram_url: z.string().max(255, "URL demasiado larga").optional(),
+  tiktok_url: z.string().max(255, "URL demasiado larga").optional(),
+});
 
 
 // ── Mini preview de card ─────────────────────────────────────────────────────
@@ -275,6 +289,8 @@ const Register = () => {
     instagram_url: "",
     tiktok_url: "",
   });
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
   const [mostrarRedes, setMostrarRedes] = useState(false);
   const [trabajosExtra, setTrabajosExtra] = useState<string[]>([]); // Tags adicionales
   const [foto, setFoto] = useState<File | null>(null);
@@ -329,14 +345,27 @@ const Register = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormErrors({});
 
-    if (!form.nombre || !form.telefono || !form.categoria_id || !form.zona_id) {
-      toast({ title: "Campos obligatorios", description: "Completá nombre, teléfono, oficio y zona.", variant: "destructive" });
+    // Zod validation
+    const result = registerSchema.safeParse(form);
+    if (!result.success) {
+      const errors: Record<string, string> = {};
+      result.error.errors.forEach(err => {
+        if (err.path[0]) {
+          errors[err.path[0].toString()] = err.message;
+        }
+      });
+      setFormErrors(errors);
+      toast({ title: "Revisá los datos ingresados", description: "Algunos campos tienen errores o superan la longitud máxima.", variant: "destructive" });
       return;
     }
-    const telefonoLimpio = form.telefono.replace(/\D/g, "");
+
+    const validData = result.data;
+    const telefonoLimpio = validData.telefono.replace(/\D/g, "");
     if (telefonoLimpio.length < 10) {
-      toast({ title: "Teléfono inválido", description: "Ingresá el número con código de país (ej: 5493854123456).", variant: "destructive" });
+      setFormErrors(prev => ({ ...prev, telefono: "Ingresá un número válido con código de área" }));
+      toast({ title: "Teléfono inválido", description: "Ingresá el número con código de país/área (ej: 5493854123456).", variant: "destructive" });
       return;
     }
 
@@ -434,36 +463,36 @@ const Register = () => {
       const servicios_texto = todosLosServicios.join(", ");
 
       const { error } = await db.from("solicitudes_registro").insert({
-        nombre: form.nombre.trim(),
+        nombre: validData.nombre.trim(),
         telefono: telefonoLimpio,
-        categoria_id: form.categoria_id || null,
-        zona_id: form.zona_id || null,
+        categoria_id: validData.categoria_id,
+        zona_id: validData.zona_id,
         servicios_texto: servicios_texto || null,
-        horarios: form.horarios.trim() || null,
-        descripcion: form.descripcion.trim() || null,
+        horarios: validData.horarios?.trim() || null,
+        descripcion: validData.descripcion?.trim() || null,
         foto_url,
         galeria_urls,
-        facebook_url: form.facebook_url.trim() || null,
-        instagram_url: form.instagram_url.trim() || null,
-        tiktok_url: form.tiktok_url.trim() || null,
+        facebook_url: validData.facebook_url?.trim() || null,
+        instagram_url: validData.instagram_url?.trim() || null,
+        tiktok_url: validData.tiktok_url?.trim() || null,
       });
 
       if (error) throw new Error(error.message);
 
       // EmailJS
       if (EMAILJS_SERVICE && EMAILJS_TEMPLATE && EMAILJS_KEY && ADMIN_EMAIL) {
-        const zonaNombre = zonas.find((z) => z.id === form.zona_id)?.nombre ?? "—";
+        const zonaNombre = zonas.find((z) => z.id === validData.zona_id)?.nombre ?? "—";
         emailjs.send(
           EMAILJS_SERVICE, EMAILJS_TEMPLATE,
           {
             admin_email: ADMIN_EMAIL,
-            nombre: form.nombre.trim(),
+            nombre: validData.nombre.trim(),
             telefono: telefonoLimpio,
             oficio: categoriaNombre,
             zona: zonaNombre,
             servicios: servicios_texto || "—",
-            horarios: form.horarios || "—",
-            descripcion: form.descripcion || "—",
+            horarios: validData.horarios || "—",
+            descripcion: validData.descripcion || "—",
             panel_url: `${window.location.origin}/admin/solicitudes`,
           },
           EMAILJS_KEY
@@ -577,15 +606,20 @@ const Register = () => {
               <div className="space-y-2">
                 <Label htmlFor="nombre" className="font-bold">Nombre o nombre comercial *</Label>
                 <Input id="nombre" placeholder="Ej: Carlos Herrera" value={form.nombre}
-                  className="rounded-xl h-12 bg-muted/30 focus:bg-card transition-all"
-                  onChange={(e) => handleChange("nombre", e.target.value)} maxLength={100} disabled={loading} />
+                  className={`rounded-xl h-12 bg-muted/30 focus:bg-card transition-all ${formErrors.nombre ? "border-red-500" : ""}`}
+                  onChange={(e) => handleChange("nombre", e.target.value)} disabled={loading} />
+                {formErrors.nombre && <p className="text-[11px] text-red-500 font-medium">{formErrors.nombre}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="telefono" className="font-bold">Teléfono WhatsApp *</Label>
                 <Input id="telefono" placeholder="Ej: 5493854123456" value={form.telefono}
-                  className="rounded-xl h-12 bg-muted/30 focus:bg-card transition-all"
-                  onChange={(e) => handleChange("telefono", e.target.value)} maxLength={20} disabled={loading} />
-                <p className="text-[11px] text-muted-foreground">Incluí código de país (549), sin espacios ni guiones.</p>
+                  className={`rounded-xl h-12 bg-muted/30 focus:bg-card transition-all ${formErrors.telefono ? "border-red-500" : ""}`}
+                  onChange={(e) => handleChange("telefono", e.target.value)} disabled={loading} />
+                {formErrors.telefono ? (
+                  <p className="text-[11px] text-red-500 font-medium">{formErrors.telefono}</p>
+                ) : (
+                  <p className="text-[11px] text-muted-foreground">Incluí código de país (549), sin espacios ni guiones.</p>
+                )}
               </div>
             </div>
 
@@ -593,7 +627,7 @@ const Register = () => {
             <div className="space-y-2">
               <Label className="font-bold">Zona de trabajo *</Label>
               <Select onValueChange={(val) => handleChange("zona_id", val)} disabled={loading || loadingZonas}>
-                <SelectTrigger className="rounded-xl h-12 bg-muted/30 focus:bg-card transition-all">
+                <SelectTrigger className={`rounded-xl h-12 bg-muted/30 focus:bg-card transition-all ${formErrors.zona_id ? "border-red-500" : ""}`}>
                   <SelectValue placeholder={loadingZonas ? "Cargando..." : "Seleccioná tu localidad"} />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-border bg-card">
@@ -602,6 +636,7 @@ const Register = () => {
                   ))}
                 </SelectContent>
               </Select>
+              {formErrors.zona_id && <p className="text-[11px] text-red-500 font-medium">{formErrors.zona_id}</p>}
             </div>
 
             {/* Categoría Principal */}
@@ -612,7 +647,7 @@ const Register = () => {
               </div>
               <p className="text-xs text-muted-foreground/80">Seleccioná la categoría donde querés aparecer primero.</p>
               <Select onValueChange={(val) => handleChange("categoria_id", val)} disabled={loading || loadingCategorias}>
-                <SelectTrigger className="rounded-xl h-12 border-primary/20 bg-card shadow-sm focus:ring-primary/20">
+                <SelectTrigger className={`rounded-xl h-12 border-primary/20 bg-card shadow-sm focus:ring-primary/20 ${formErrors.categoria_id ? "border-red-500" : ""}`}>
                   <SelectValue placeholder={loadingCategorias ? "Cargando..." : "Elegí tu oficio principal"} />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-border bg-card">
@@ -621,6 +656,7 @@ const Register = () => {
                   ))}
                 </SelectContent>
               </Select>
+              {formErrors.categoria_id && <p className="text-[11px] text-red-500 font-medium">{formErrors.categoria_id}</p>}
             </div>
 
             {/* Trabajos adicionales */}
@@ -693,16 +729,16 @@ const Register = () => {
                   id="descripcion"
                   placeholder="Ej: Tengo 10 años de experiencia, trabajos garantizados, presupuesto sin cargo..."
                   value={form.descripcion}
-                  className="rounded-xl bg-muted/30 focus:bg-card transition-all placeholder:text-muted-foreground/50"
+                  className={`rounded-xl bg-muted/30 focus:bg-card transition-all placeholder:text-muted-foreground/50 ${formErrors.descripcion ? "border-red-500" : ""}`}
                   onChange={(e) => handleChange("descripcion", e.target.value)}
                   rows={4}
-                  maxLength={500}
                   disabled={loading}
                 />
                 <div className="flex items-center justify-between">
                   <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Revisá tu ortografía</p>
-                  <p className="text-[11px] font-mono text-muted-foreground">{form.descripcion.length}/500</p>
+                  <p className={`text-[11px] font-mono ${form.descripcion.length > 300 ? "text-red-500" : "text-muted-foreground"}`}>{form.descripcion.length}/300</p>
                 </div>
+                {formErrors.descripcion && <p className="text-[11px] text-red-500 font-medium">{formErrors.descripcion}</p>}
 
                 {showPreview && (
                   <div className="animate-in fade-in slide-in-from-top-4 duration-300 pt-4">
@@ -749,15 +785,18 @@ const Register = () => {
                 <div className="space-y-4 border-t border-border px-5 pb-6 pt-5 animate-in slide-in-from-top-2">
                   <div className="space-y-1.5">
                     <Label htmlFor="facebook_url" className="text-xs font-bold text-muted-foreground">URL de Facebook</Label>
-                    <Input id="facebook_url" type="url" placeholder="https://facebook.com/tualbanileria" className="rounded-xl h-11 bg-card" value={form.facebook_url} onChange={(e) => handleChange("facebook_url", e.target.value)} disabled={loading} />
+                    <Input id="facebook_url" type="url" placeholder="https://facebook.com/tualbanileria" className={`rounded-xl h-11 bg-card ${formErrors.facebook_url ? "border-red-500" : ""}`} value={form.facebook_url} onChange={(e) => handleChange("facebook_url", e.target.value)} disabled={loading} />
+                    {formErrors.facebook_url && <p className="text-[11px] text-red-500 font-medium mt-1">{formErrors.facebook_url}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="instagram_url" className="text-xs font-bold text-muted-foreground">Usuario de Instagram</Label>
-                    <Input id="instagram_url" type="url" placeholder="https://instagram.com/tucarpinteria" className="rounded-xl h-11 bg-card" value={form.instagram_url} onChange={(e) => handleChange("instagram_url", e.target.value)} disabled={loading} />
+                    <Input id="instagram_url" type="url" placeholder="https://instagram.com/tucarpinteria" className={`rounded-xl h-11 bg-card ${formErrors.instagram_url ? "border-red-500" : ""}`} value={form.instagram_url} onChange={(e) => handleChange("instagram_url", e.target.value)} disabled={loading} />
+                    {formErrors.instagram_url && <p className="text-[11px] text-red-500 font-medium mt-1">{formErrors.instagram_url}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="tiktok_url" className="text-xs font-bold text-muted-foreground">Usuario de TikTok</Label>
-                    <Input id="tiktok_url" type="url" placeholder="https://tiktok.com/@tunombre" className="rounded-xl h-11 bg-card" value={form.tiktok_url} onChange={(e) => handleChange("tiktok_url", e.target.value)} disabled={loading} />
+                    <Input id="tiktok_url" type="url" placeholder="https://tiktok.com/@tunombre" className={`rounded-xl h-11 bg-card ${formErrors.tiktok_url ? "border-red-500" : ""}`} value={form.tiktok_url} onChange={(e) => handleChange("tiktok_url", e.target.value)} disabled={loading} />
+                    {formErrors.tiktok_url && <p className="text-[11px] text-red-500 font-medium mt-1">{formErrors.tiktok_url}</p>}
                   </div>
                 </div>
               )}

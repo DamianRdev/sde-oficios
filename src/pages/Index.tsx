@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { useSearchParams, useLocation } from "react-router-dom";
 import {
   Search, AlertCircle, ChevronLeft, ChevronRight, X, SlidersHorizontal, ChevronDown,
+  Zap, Droplet, Flame, PaintRoller, Hammer, Wind, BrickWall, Leaf, Wrench, Sparkles, Truck, Key
 } from "lucide-react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
@@ -23,6 +24,21 @@ const EMOJIS: Record<string, string> = {
   "albanil": "🧱",
   "jardinero": "🌿",
   "todos": "🔍"
+};
+
+const ICONS: Record<string, React.ElementType> = {
+  "electricista": Zap,
+  "plomero": Droplet,
+  "gasista": Flame,
+  "pintor": PaintRoller,
+  "carpintero": Hammer,
+  "aire-acondicionado": Wind,
+  "albanil": BrickWall,
+  "jardinero": Leaf,
+  "limpieza": Sparkles,
+  "fletes": Truck,
+  "cerrajero": Key,
+  "herrero": Wrench,
 };
 
 const POR_PAGINA = 12;
@@ -146,6 +162,44 @@ const Index = () => {
           onCategoriaRapida={handleCategoriaChange}
           onBusqueda={handleBusqueda}
         />
+
+        {/* ── CATEGORÍAS POPULARES GRILLA ── */}
+        <section className="bg-white dark:bg-[#020617] py-14">
+          <div className="container max-w-5xl mx-auto px-4">
+            <h2 className="text-center font-display text-[26px] md:text-[32px] font-black tracking-tight text-slate-900 dark:text-white mb-8">
+              Categorías Populares
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
+              {categorias.slice(0, 11).map((cat) => {
+                const Icon = ICONS[cat.slug] || Wrench;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => {
+                       handleCategoriaChange(cat.slug);
+                       scrollToProfessionals();
+                     }}
+                    className="flex flex-col items-center justify-center gap-3.5 rounded-[20px] border border-slate-200 dark:border-slate-800 bg-card p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-slate-300 active:scale-[0.98]"
+                  >
+                    <Icon className="h-[34px] w-[34px] text-[#FF5B00] stroke-[1.5px]" />
+                    <span className="text-[15px] font-semibold text-slate-800 dark:text-slate-200 tracking-tight">{cat.nombre}</span>
+                  </button>
+                );
+              })}
+              {/* Ver Todas */}
+              <button
+                onClick={() => {
+                   handleCategoriaChange("todos");
+                   scrollToProfessionals();
+                 }}
+                className="flex flex-col items-center justify-center gap-3.5 rounded-[20px] border border-[#FF5B00]/20 bg-[#FF5B00]/[0.03] p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-[#FF5B00]/10 hover:shadow-md active:scale-[0.98]"
+              >
+                <Search className="h-[34px] w-[34px] text-[#FF5B00] stroke-[1.5px]" />
+                <span className="text-[15px] font-semibold text-[#FF5B00] tracking-tight">Ver Todas</span>
+              </button>
+            </div>
+          </div>
+        </section>
 
         {/* ── SECCIÓN PROFESIONALES ── */}
         <section ref={professionalsRef} id="profesionales" className="bg-secondary/30 py-8 md:py-14">

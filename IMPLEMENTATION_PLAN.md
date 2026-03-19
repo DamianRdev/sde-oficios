@@ -12,7 +12,7 @@ Reducir la cantidad de información visible en el pie de página (Footer) para m
    - La navegación ya está en el menú superior (Header). En móviles, esta lista sólo alarga la pantalla innecesariamente.
    - Acción: Agregar la clase `hidden md:block` al contenedor de la "Columna 2: Navegación".
 
-3. **Simplificar la sección "Contacto" en móviles:**
+ 
    - El texto largo *"¿Tenés dudas, sugerencias o querés mejorar tu publicación? Escribinos directamente."* ocupa mucho espacio.
    - Acción: Ocultar este párrafo en celulares (`hidden md:block`) y dejar únicamente el botón de WhatsApp visible y centrado o alineado al resto del contenido para un contacto rápido.
 

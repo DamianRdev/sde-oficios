@@ -23,6 +23,7 @@ import WhatsAppFloat from "./components/WhatsAppFloat";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { MobileNav } from "./components/MobileNav";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,7 +48,7 @@ const AppRoutes = () => {
   }, [location.pathname]);
 
   return (
-    <>
+    <div className={`flex flex-col min-h-screen ${!isAdmin ? "md:pb-0 pb-[68px]" : ""}`}>
       <Routes>
         {/* Rutas públicas */}
         <Route path="/" element={<Index />} />
@@ -113,7 +114,10 @@ const AppRoutes = () => {
 
       {/* Botón flotante de WhatsApp — solo en páginas públicas */}
       {!isAdmin && <WhatsAppFloat />}
-    </>
+      
+      {/* Barra de Navegación Móvil */}
+      {!isAdmin && <MobileNav />}
+    </div>
   );
 };
 
